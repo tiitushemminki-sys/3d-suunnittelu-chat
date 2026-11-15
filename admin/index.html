@@ -12,7 +12,7 @@
 </main>
 <script type="module">
 import {Client,Account,TablesDB,Storage,Query} from 'https://cdn.jsdelivr.net/npm/appwrite@21.3.0/+esm';
-const ENDPOINT='https://fra.cloud.appwrite.io/v1', PROJECT='6af963e00016fcf59916', DATABASE='6af963e0003a79ee5814', TABLE='6af965ae00286fabfddd', BUCKET='6af9762600381608ee69';
+const ENDPOINT='https://fra.cloud.appwrite.io/v1', PROJECT='6af963990016fcf59916', DATABASE='6af963e0003a79ee5814', TABLE='6af965ae00286fabfddd', BUCKET='6af9762600381608ee69';
 const client=new Client().setEndpoint(ENDPOINT).setProject(PROJECT), account=new Account(client), tables=new TablesDB(client), storage=new Storage(client);
 const $=id=>document.getElementById(id);let rows=[],selected=null;
 function msg(el,s,cls=''){el.textContent=s;el.className=cls}
