@@ -110,7 +110,7 @@ $("requestForm").addEventListener("submit",async e=>{
   const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"submit",asiakas_nimi:$("name").value.trim(),asiakas_email:$("email").value.trim(),esineen_kuvaus:transcript(),pituus_mm:$("length").value,leveys_mm:$("width").value,korkeus_mm:$("height").value,materiaali:$("material").value})});
   const d=await r.json();if(!r.ok||!d.success)throw Error(d.error||"Tallennus epäonnistui");
   $("notice").textContent=translations[currentLanguage].success+d.id;b.textContent=translations[currentLanguage].submit;$("requestForm").querySelectorAll("input,select,button").forEach(x=>x.disabled=true);
- }catch(err){$("notice").textContent=translations[currentLanguage].error;b.disabled=false;b.textContent=translations[currentLanguage].submit;console.error(err)}
+ }catch(err){$("notice").textContent=translations[currentLanguage].error+" ("+(err?.message||"Tuntematon virhe")+")";b.disabled=false;b.textContent=translations[currentLanguage].submit;console.error("Suunnittelupyynnön lähetys epäonnistui:",err)}
 });
 </script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js"}}</script>
