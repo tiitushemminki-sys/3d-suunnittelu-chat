@@ -9,7 +9,6 @@ on:
     branches: [main]
 permissions:
   contents: read
-  actions: read
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -26,6 +25,12 @@ jobs:
       - name: Install Capacitor
         working-directory: android-app
         run: npm install
+      - name: Prepare app web files
+        working-directory: android-app
+        run: cp ../admin/index.html www/index.html
+      - name: Create Android project
+        working-directory: android-app
+        run: npx cap add android
       - name: Sync Android project
         working-directory: android-app
         run: npx cap sync android
