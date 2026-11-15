@@ -18,31 +18,30 @@ textarea{resize:vertical;min-height:52px;max-height:150px}button{border:0;border
 <section class="panel"><div class="status">Tekoäly pyrkii vastaamaan samalla kielellä, jolla kirjoitat. Voit vaihtaa kieltä kesken keskustelun.</div>
 <div id="chat" aria-live="polite"><div class="msg assistant">Hei! Millaisen 3D-tulostettavan esineen haluaisit suunnitella? Kerro ensin, mihin sitä käytetään.</div></div>
 <form class="composer" id="chatForm"><textarea id="message" placeholder="Kirjoita ideasi tähän..." required></textarea><button id="send">Lähetä</button></form></section>
-<section class="panel submit"><h2>Lähetä suunnittelupyyntö</h2><p>Kun olet kuvannut ideasi, voit lähettää keskustelun käsiteltäväksi.</p>
-<form id="requestForm"><div class="grid">
+<section class="panel submit"><div id="approval" hidden><h2>Viedäänkö suunnitelma eteenpäin?</h2><p>Haluatko lähettää suunnittelupyynnön käsiteltäväksi, jotta tuotteen valmistelu voi alkaa?</p><div class="grid"><button type="button" id="approve">Kyllä, jatketaan</button><button type="button" id="decline" style="background:#40516a">Ei vielä, jatkan keskustelua</button></div></div><form id="requestForm" hidden><h2>Yhteystiedot ja tuotteen tiedot</h2><p>Täytä tiedot, jotta voimme käsitellä pyyntösi.</p><div class="grid">
 <div class="field"><label for="name">Nimi</label><input id="name" maxlength="120" required></div>
 <div class="field"><label for="email">Sähköposti</label><input id="email" type="email" maxlength="254" required></div>
 <div class="field"><label for="length">Pituus (mm)</label><input id="length" type="number" min="1" max="2500" value="100" required></div>
 <div class="field"><label for="width">Leveys (mm)</label><input id="width" type="number" min="1" max="2500" value="80" required></div>
 <div class="field"><label for="height">Korkeus (mm)</label><input id="height" type="number" min="1" max="2600" value="50" required></div>
 <div class="field"><label for="material">Materiaali</label><select id="material"><option value="pla">PLA</option><option value="petg">PETG</option><option value="abs">ABS</option><option value="other">Muu / en tiedä</option></select></div>
-</div><button id="submitRequest">Lähetä suunnittelupyyntö</button><div id="notice" role="status"></div></form>
+</div><label style="display:flex;gap:10px;align-items:flex-start;margin:12px 0;color:var(--muted);font-size:14px"><input id="confirmDetails" type="checkbox" required style="width:auto;margin-top:5px">Olen tarkistanut yhteystietoni ja tuotteen tiedot. Hyväksyn, että suunnittelupyyntö lähetetään käsiteltäväksi.</label><button id="submitRequest">Vahvista ja lähetä pyyntö</button><div id="notice" role="status"></div></form>
 <div class="small">Tässä versiossa chat ja pyyntöjen tallennus toimivat. 3D-esikatselu, automaattinen mallinnus, kuvalataus sekä STL-/3MF-vienti eivät ole vielä käytössä.</div>
 </section></main>
 <script>
 const API_URL="https://3d-mallinnus-palvelu-6af9.fra.appwrite.run";
-const $=id=>document.getElementById(id), chat=$("chat"), messages=[];
+const $=id=>document.getElementById(id), chat=$("chat"), messages=[];let consentAsked=false,approved=false;
 function add(role,text){const d=document.createElement("div");d.className="msg "+role;d.textContent=text;chat.appendChild(d);chat.scrollTop=chat.scrollHeight}
-function transcript(){return messages.map(m=>(m.role==="user"?"Asiakas: ":"Tekoäly: ")+m.content).join("\\n\\n")}
+function transcript(){return messages.map(m=>(m.role==="user"?"Asiakas: ":"Tekoäly: ")+m.content).join("\\n\\n")}\nfunction askApproval(){if(consentAsked||approved||messages.filter(m=>m.role==="user").length<3)return;consentAsked=true;const q="Haluatko lähettää tämän suunnittelupyynnön eteenpäin, jotta tuotteesi valmistelu voi alkaa? Valitsemalla kyllä pyydän seuraavaksi yhteystietosi ja tuotteen mitat.";messages.push({role:"assistant",content:q});add("assistant",q);$("approval").hidden=false;}\n$("approve").addEventListener("click",()=>{approved=true;$("approval").hidden=true;$("requestForm").hidden=false;$("requestForm").scrollIntoView({behavior:"smooth",block:"start"});});\n$("decline").addEventListener("click",()=>{$("approval").hidden=true;consentAsked=false;add("assistant","Ei hätää! Voimme jatkaa suunnittelua. Kerro vain, mitä haluaisit vielä muuttaa tai tarkentaa.");});
 $("chatForm").addEventListener("submit",async e=>{
 e.preventDefault();const value=$("message").value.trim();if(!value)return;
-messages.push({role:"user",content:value});add("user",value);$("message").value="";$("send").disabled=true;$("send").textContent="Hetki...";
-try{const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"chat",messages})});const d=await r.json();if(!r.ok||!d.success)throw Error(d.error||"Virhe");messages.push({role:"assistant",content:d.reply});add("assistant",d.reply)}
+messages.push({role:"user",content:value});if(approved){approved=false;$("requestForm").hidden=true;$("confirmDetails").checked=false;}consentAsked=false;add("user",value);$("message").value="";$("send").disabled=true;$("send").textContent="Hetki...";
+try{const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"chat",messages})});const d=await r.json();if(!r.ok||!d.success)throw Error(d.error||"Virhe");messages.push({role:"assistant",content:d.reply});add("assistant",d.reply);askApproval()}
 catch(err){add("assistant","Viestin lähetys epäonnistui. Yritä hetken kuluttua uudelleen.");console.error(err)}
 finally{$("send").disabled=false;$("send").textContent="Lähetä";$("message").focus()}
 });
 $("requestForm").addEventListener("submit",async e=>{
-e.preventDefault();if(!messages.some(m=>m.role==="user")){$("notice").textContent="Kirjoita ensin ideastasi keskusteluun.";return}
+e.preventDefault();if(!approved){$("notice").textContent="Hyväksy ensin suunnitelman lähettäminen keskustelun yläpuolella.";return}if(!messages.some(m=>m.role==="user")){$("notice").textContent="Kirjoita ensin ideastasi keskusteluun.";return}
 const b=$("submitRequest");b.disabled=true;b.textContent="Lähetetään...";$("notice").textContent="";
 try{const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
 action:"submit",asiakas_nimi:$("name").value.trim(),asiakas_email:$("email").value.trim(),esineen_kuvaus:transcript(),
