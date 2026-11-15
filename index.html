@@ -41,6 +41,16 @@ button{border:0;border-radius:11px;padding:12px 16px;background:var(--blue);colo
 <form class="composer" id="chatForm"><textarea id="message" placeholder="Kirjoita tähän..." required aria-label="Kirjoita viesti"></textarea><button id="send" type="submit">Lähetä</button></form>
 </section>
 <section class="card action">
+<div class="modelbox">
+ <h3 id="modelTitle">3D-mallin esikatselu</h3>
+ <p class="muted" id="modelInfo">Valitse mallityyppi. Voit pyörittää mallia hiirellä tai sormella.</p>
+ <label for="modelType" id="modelTypeLabel">Mallityyppi</label>
+ <select id="modelType"><option value="box">Avoin säilytyslaatikko</option><option value="stand">Puhelinteline</option><option value="hook">Seinäkoukku</option></select>
+ <div id="preview3d"><div id="previewLoading">3D-esikatselu latautuu…</div></div>
+ <div class="exportrow"><button type="button" id="downloadStl">Lataa STL</button><button type="button" id="download3mf">Lataa 3MF</button></div>
+ <div id="modelNotice" role="status"></div>
+</div>
+
 <h2 id="readyTitle">Kun olet valmis</h2><p id="readyText">Sinun ei tarvitse odottaa, että tekoäly pyytää lupaa. Voit lähettää suunnitelman milloin tahansa tästä painikkeesta.</p>
 <button class="primary" id="openForm" type="button">Valmis – lähetä suunnittelupyyntö</button>
 <form id="requestForm" hidden>
@@ -54,15 +64,7 @@ button{border:0;border-radius:11px;padding:12px 16px;background:var(--blue);colo
 <div class="field"><label for="material" id="materialLabel">Materiaali</label><select id="material"><option value="pla">PLA</option><option value="petg">PETG</option><option value="abs">ABS</option><option value="other" id="otherMaterial">En tiedä / muu</option></select></div>
 </div>
 
-<div class="modelbox">
- <h3 id="modelTitle">3D-mallin esikatselu</h3>
- <p class="muted" id="modelInfo">Valitse mallityyppi. Voit pyörittää mallia hiirellä tai sormella.</p>
- <label for="modelType" id="modelTypeLabel">Mallityyppi</label>
- <select id="modelType"><option value="box">Avoin säilytyslaatikko</option><option value="stand">Puhelinteline</option><option value="hook">Seinäkoukku</option></select>
- <div id="preview3d"><div id="previewLoading">3D-esikatselu latautuu…</div></div>
- <div class="exportrow"><button type="button" id="downloadStl">Lataa STL</button><button type="button" id="download3mf">Lataa 3MF</button></div>
- <div id="modelNotice" role="status"></div>
-</div>
+
 <label id="consent"><input id="confirmDetails" type="checkbox" required><span id="consentText">Olen tarkistanut tiedot ja hyväksyn, että suunnittelupyyntö lähetetään käsiteltäväksi.</span></label>
 <button class="primary" id="submitRequest" type="submit">Lähetä pyyntö</button><div id="notice" role="status"></div>
 </form>
