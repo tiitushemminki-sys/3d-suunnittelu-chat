@@ -38,6 +38,12 @@ $("approve").addEventListener("click",()=>{approved=true;$("approval").hidden=tr
 $("decline").addEventListener("click",()=>{$("approval").hidden=true;consentAsked=false;add("assistant","Ei hätää! Voimme jatkaa suunnittelua. Kerro vain, mitä haluaisit vielä muuttaa tai tarkentaa.");});
 $("chatForm").addEventListener("submit",async e=>{
 e.preventDefault();const value=$("message").value.trim();if(!value)return;
+const lastAssistant=[...messages].reverse().find(m=>m.role==="assistant");
+const affirmative=/^(kyllä|joo|juu|kyllä kiitos|joo kiitos|haluan|sopii|ok|okay|yes|yep|ja|absolut|gärna)[.! ]*$/i.test(value);
+const previousAskedToSend=!!lastAssistant&&/(eteenpäin|lähettää|lähetetään|lähettämistä|suunnittelupyyntö|send|submit|forward|skicka|vidare)/i.test(lastAssistant.content);
+if(affirmative&&(consentAsked||previousAskedToSend)){
+ messages.push({role:"user",content:value});add("user",value);approved=true;consentAsked=false;$("approval").hidden=true;$("requestForm").hidden=false;add("assistant","Hienoa! Pyyntö voidaan lähettää tämän lomakkeen kautta. Täytä yhteystietosi ja tarkista tuotteen mitat, ja paina sitten Vahvista ja lähetä pyyntö.");$("requestForm").scrollIntoView({behavior:"smooth",block:"start"});$("message").value="";return;
+}
 messages.push({role:"user",content:value});if(approved){approved=false;$("requestForm").hidden=true;$("confirmDetails").checked=false;}consentAsked=false;add("user",value);$("message").value="";$("send").disabled=true;$("send").textContent="Hetki...";
 try{const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"chat",messages:[{role:"user",content:"TÄRKEÄ KIELIOHJE: Vastaa asiakkaalle samalla kielellä kuin hänen viimeisin viestinsä. Jos viimeisin viesti on suomeksi, vastaa suomeksi. Jos ruotsiksi, vastaa ruotsiksi. Jos englanniksi, vastaa englanniksi. Älä vastaa englanniksi, jos asiakas kirjoittaa suomeksi."},...messages]})});const d=await r.json();if(!r.ok||!d.success)throw Error(d.error||"Virhe");messages.push({role:"assistant",content:d.reply});add("assistant",d.reply);askApproval()}
 catch(err){add("assistant","Viestin lähetys epäonnistui. Yritä hetken kuluttua uudelleen.");console.error(err)}
