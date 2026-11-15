@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="fi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Suunnittele oma 3D-esine</title>
+<style>
+:root{color-scheme:dark;--bg:#09111e;--panel:#121e30;--line:#2b3b52;--blue:#2676e8;--text:#f4f7fb;--muted:#aab7c9}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(140deg,#080d16,#14233a);color:var(--text);font:16px/1.5 Arial,sans-serif;min-height:100vh}
+.wrap{max-width:900px;margin:auto;padding:28px 16px}.top{margin-bottom:20px}.top h1{font-size:clamp(26px,5vw,38px);margin:0 0 8px}.top p,.hint{color:var(--muted)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 18px 55px #0005}
+.status{padding:12px 18px;border-bottom:1px solid var(--line);color:var(--muted);font-size:13px}
+#chat{height:min(55vh,520px);min-height:300px;overflow:auto;padding:18px;display:flex;flex-direction:column;gap:12px}
+.msg{max-width:86%;padding:12px 15px;border-radius:15px;white-space:pre-wrap;overflow-wrap:anywhere}.assistant{background:#1d3049;align-self:flex-start}.user{background:#155fc4;align-self:flex-end}
+.composer{display:flex;gap:10px;padding:14px;border-top:1px solid var(--line)}textarea,input,select{width:100%;background:#0b1422;color:var(--text);border:1px solid #354861;border-radius:10px;padding:12px;font:inherit}
+textarea{resize:vertical;min-height:52px;max-height:150px}button{border:0;border-radius:10px;background:var(--blue);color:white;padding:12px 18px;font-weight:700;cursor:pointer}button:disabled{opacity:.5;cursor:wait}
+.submit{margin-top:18px;padding:20px}.submit h2{margin:0 0 6px}.submit p{color:var(--muted);font-size:14px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0}.field label{display:block;font-size:13px;color:var(--muted);margin-bottom:5px}.wide{grid-column:1/-1}.submit button{width:100%}#notice{min-height:24px;margin-top:10px;color:#b9d4ff}.small{font-size:12px;color:var(--muted);margin-top:12px}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.wide{grid-column:auto}.msg{max-width:94%}}
+</style></head><body><main class="wrap">
+<header class="top"><h1>Suunnittele oma 3D-esine</h1><p>Kerro ideastasi tekoälylle. Se auttaa tarkentamaan esineen muotoa, mittoja ja käyttötarkoitusta.</p></header>
+<section class="panel"><div class="status">Tekoäly pyrkii vastaamaan samalla kielellä, jolla kirjoitat. Voit vaihtaa kieltä kesken keskustelun.</div>
+<div id="chat" aria-live="polite"><div class="msg assistant">Hei! Millaisen 3D-tulostettavan esineen haluaisit suunnitella? Kerro ensin, mihin sitä käytetään.</div></div>
+<form class="composer" id="chatForm"><textarea id="message" placeholder="Kirjoita ideasi tähän..." required></textarea><button id="send">Lähetä</button></form></section>
+<section class="panel submit"><h2>Lähetä suunnittelupyyntö</h2><p>Kun olet kuvannut ideasi, voit lähettää keskustelun käsiteltäväksi.</p>
+<form id="requestForm"><div class="grid">
+<div class="field"><label for="name">Nimi</label><input id="name" maxlength="120" required></div>
+<div class="field"><label for="email">Sähköposti</label><input id="email" type="email" maxlength="254" required></div>
+<div class="field"><label for="length">Pituus (mm)</label><input id="length" type="number" min="1" max="2500" value="100" required></div>
+<div class="field"><label for="width">Leveys (mm)</label><input id="width" type="number" min="1" max="2500" value="80" required></div>
+<div class="field"><label for="height">Korkeus (mm)</label><input id="height" type="number" min="1" max="2600" value="50" required></div>
+<div class="field"><label for="material">Materiaali</label><select id="material"><option value="pla">PLA</option><option value="petg">PETG</option><option value="abs">ABS</option><option value="other">Muu / en tiedä</option></select></div>
+</div><button id="submitRequest">Lähetä suunnittelupyyntö</button><div id="notice" role="status"></div></form>
+<div class="small">Tässä versiossa chat ja pyyntöjen tallennus toimivat. 3D-esikatselu, automaattinen mallinnus, kuvalataus sekä STL-/3MF-vienti eivät ole vielä käytössä.</div>
+</section></main>
+<script>
+const API_URL="https://3d-mallinnus-palvelu-6af9.fra.appwrite.run";
+const $=id=>document.getElementById(id), chat=$("chat"), messages=[];
+function add(role,text){const d=document.createElement("div");d.className="msg "+role;d.textContent=text;chat.appendChild(d);chat.scrollTop=chat.scrollHeight}
+function transcript(){return messages.map(m=>(m.role==="user"?"Asiakas: ":"Tekoäly: ")+m.content).join("\\n\\n")}
+$("chatForm").addEventListener("submit",async e=>{
+e.preventDefault();const value=$("message").value.trim();if(!value)return;
+messages.push({role:"user",content:value});add("user",value);$("message").value="";$("send").disabled=true;$("send").textContent="Hetki...";
+try{const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"chat",messages})});const d=await r.json();if(!r.ok||!d.success)throw Error(d.error||"Virhe");messages.push({role:"assistant",content:d.reply});add("assistant",d.reply)}
+catch(err){add("assistant","Viestin lähetys epäonnistui. Yritä hetken kuluttua uudelleen.");console.error(err)}
+finally{$("send").disabled=false;$("send").textContent="Lähetä";$("message").focus()}
+});
+$("requestForm").addEventListener("submit",async e=>{
+e.preventDefault();if(!messages.some(m=>m.role==="user")){$("notice").textContent="Kirjoita ensin ideastasi keskusteluun.";return}
+const b=$("submitRequest");b.disabled=true;b.textContent="Lähetetään...";$("notice").textContent="";
+try{const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
+action:"submit",asiakas_nimi:$("name").value.trim(),asiakas_email:$("email").value.trim(),esineen_kuvaus:transcript(),
+pituus_mm:$("length").value,leveys_mm:$("width").value,korkeus_mm:$("height").value,materiaali:$("material").value
+})});const d=await r.json();if(!r.ok||!d.success)throw Error(d.error||"Tallennus epäonnistui");
+$("notice").textContent="Pyyntö vastaanotettu! Tunniste: "+d.id;b.textContent="Pyyntö lähetetty"}
+catch(err){$("notice").textContent="Lähetys epäonnistui. Tarkista tiedot ja yritä uudelleen.";b.disabled=false;b.textContent="Lähetä suunnittelupyyntö";console.error(err)}
+});
+</script></body></html>
