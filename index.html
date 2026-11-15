@@ -1,62 +1,78 @@
 <!doctype html>
-<html lang="fi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Suunnittele oma 3D-esine</title>
+<html lang="fi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Suunnittele 3D-esine</title>
 <style>
-:root{color-scheme:dark;--bg:#09111e;--panel:#121e30;--line:#2b3b52;--blue:#2676e8;--text:#f4f7fb;--muted:#aab7c9}
-*{box-sizing:border-box}body{margin:0;background:linear-gradient(140deg,#080d16,#14233a);color:var(--text);font:16px/1.5 Arial,sans-serif;min-height:100vh}
-.wrap{max-width:900px;margin:auto;padding:28px 16px}.top{margin-bottom:20px}.top h1{font-size:clamp(26px,5vw,38px);margin:0 0 8px}.top p,.hint{color:var(--muted)}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 18px 55px #0005}
-.status{padding:12px 18px;border-bottom:1px solid var(--line);color:var(--muted);font-size:13px}
-#chat{height:min(55vh,520px);min-height:300px;overflow:auto;padding:18px;display:flex;flex-direction:column;gap:12px}
-.msg{max-width:86%;padding:12px 15px;border-radius:15px;white-space:pre-wrap;overflow-wrap:anywhere}.assistant{background:#1d3049;align-self:flex-start}.user{background:#155fc4;align-self:flex-end}
-.composer{display:flex;gap:10px;padding:14px;border-top:1px solid var(--line)}textarea,input,select{width:100%;background:#0b1422;color:var(--text);border:1px solid #354861;border-radius:10px;padding:12px;font:inherit}
-textarea{resize:vertical;min-height:52px;max-height:150px}button{border:0;border-radius:10px;background:var(--blue);color:white;padding:12px 18px;font-weight:700;cursor:pointer}button:disabled{opacity:.5;cursor:wait}
-.submit{margin-top:18px;padding:20px}.submit h2{margin:0 0 6px}.submit p{color:var(--muted);font-size:14px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0}.field label{display:block;font-size:13px;color:var(--muted);margin-bottom:5px}.wide{grid-column:1/-1}.submit button{width:100%}#notice{min-height:24px;margin-top:10px;color:#b9d4ff}.small{font-size:12px;color:var(--muted);margin-top:12px}
-@media(max-width:600px){.grid{grid-template-columns:1fr}.wide{grid-column:auto}.msg{max-width:94%}}
-</style></head><body><main class="wrap">
-<header class="top"><h1>Suunnittele oma 3D-esine</h1><p>Kerro ideastasi tekoälylle. Se auttaa tarkentamaan esineen muotoa, mittoja ja käyttötarkoitusta.</p></header>
-<section class="panel"><div class="status">Tekoäly pyrkii vastaamaan samalla kielellä, jolla kirjoitat. Voit vaihtaa kieltä kesken keskustelun.</div>
-<div id="chat" aria-live="polite"><div class="msg assistant">Hei! Millaisen 3D-tulostettavan esineen haluaisit suunnitella? Kerro ensin, mihin sitä käytetään.</div></div>
-<form class="composer" id="chatForm"><textarea id="message" placeholder="Kirjoita ideasi tähän..." required></textarea><button id="send">Lähetä</button></form></section>
-<section class="panel submit"><div id="approval" hidden><h2>Viedäänkö suunnitelma eteenpäin?</h2><p>Haluatko lähettää suunnittelupyynnön käsiteltäväksi, jotta tuotteen valmistelu voi alkaa?</p><div class="grid"><button type="button" id="approve">Kyllä, jatketaan</button><button type="button" id="decline" style="background:#40516a">Ei vielä, jatkan keskustelua</button></div></div><form id="requestForm" hidden><h2>Yhteystiedot ja tuotteen tiedot</h2><p>Täytä tiedot, jotta voimme käsitellä pyyntösi.</p><div class="grid">
-<div class="field"><label for="name">Nimi</label><input id="name" maxlength="120" required></div>
-<div class="field"><label for="email">Sähköposti</label><input id="email" type="email" maxlength="254" required></div>
+:root{color-scheme:dark;--bg:#09111e;--panel:#142238;--line:#30445f;--blue:#2878ed;--text:#f5f7fb;--muted:#b7c4d6}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(145deg,#08111f,#172a45);color:var(--text);font:16px/1.5 Arial,sans-serif;min-height:100vh}
+main{max-width:760px;margin:auto;padding:28px 16px 50px}.intro{text-align:center;margin:8px 0 22px}.intro h1{font-size:clamp(28px,6vw,40px);line-height:1.1;margin:0 0 12px}.intro p{color:var(--muted);margin:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 16px 45px #0004}
+.topline{padding:13px 18px;border-bottom:1px solid var(--line);font-size:14px;color:var(--muted)}
+#chat{height: min(48vh,460px);min-height:280px;overflow:auto;padding:18px;display:flex;flex-direction:column;gap:12px}
+.msg{max-width:88%;padding:12px 15px;border-radius:15px;white-space:pre-wrap;overflow-wrap:anywhere}.assistant{background:#213752;align-self:flex-start}.user{background:#1766cf;align-self:flex-end}
+.composer{display:flex;gap:9px;padding:13px;border-top:1px solid var(--line)}textarea,input,select{font:inherit;color:var(--text);background:#0b1728;border:1px solid #3a506d;border-radius:11px;padding:12px;width:100%}
+textarea{resize:vertical;min-height:50px;max-height:130px}.composer button{min-width:92px}
+button{border:0;border-radius:11px;padding:12px 16px;background:var(--blue);color:white;font-weight:700;font-size:15px;cursor:pointer}button:disabled{opacity:.55;cursor:wait}
+.examples{padding:0 16px 15px;display:flex;flex-wrap:wrap;gap:8px}.examples button{background:#263c59;border:1px solid #3d5677;font-size:13px;padding:9px 12px}
+.action{margin-top:15px;padding:18px}.action h2{font-size:20px;margin:0 0 5px}.action p,.muted{color:var(--muted);font-size:14px;margin:0 0 13px}.primary{width:100%;padding:15px;font-size:16px}
+#requestForm{margin-top:16px;padding:18px;border:1px solid var(--line);border-radius:15px;background:#0e1a2b}#requestForm h2{margin:0 0 5px;font-size:20px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:15px 0}.field label{display:block;font-size:13px;color:var(--muted);margin-bottom:5px}
+#consent{display:flex;align-items:flex-start;gap:9px;color:var(--muted);font-size:13px;margin:14px 0}#consent input{width:auto;margin-top:4px}#notice{margin-top:12px;color:#c5dcff;overflow-wrap:anywhere;min-height:22px}
+.foot{font-size:12px;color:var(--muted);text-align:center;margin:16px 4px 0}
+@media(max-width:560px){main{padding:18px 11px 35px}.grid{grid-template-columns:1fr}#chat{height:48vh;min-height:260px}.msg{max-width:95%}.composer{align-items:stretch}.composer button{min-width:76px;padding:10px}}
+</style>
+</head>
+<body><main>
+<header class="intro"><h1>Suunnittele oma 3D-esine</h1><p>Kerro ideasi omin sanoin. Tekoäly auttaa suunnittelussa – sinun ei tarvitse osata 3D-mallinnusta.</p></header>
+<section class="card">
+<div class="topline">💬 Keskustele suunnitteluavustajan kanssa. Kysy tai kerro vain yksi asia kerrallaan.</div>
+<div id="chat" aria-live="polite"><div class="msg assistant">Hei! 😊 Millaisen esineen haluaisit? Voit kertoa idean vaikka yhdellä lauseella.</div></div>
+<div class="examples" aria-label="Esimerkkejä"><button type="button" data-prompt="Yllätä minut ja keksi hyödyllinen pieni 3D-tulostettava esine.">Yllätä minut</button><button type="button" data-prompt="Haluan suunnitella koristeen.">Koriste</button><button type="button" data-prompt="Haluan suunnitella käytännöllisen arjen apuvälineen.">Käyttöesine</button></div>
+<form class="composer" id="chatForm"><textarea id="message" placeholder="Kirjoita tähän..." required aria-label="Kirjoita viesti"></textarea><button id="send" type="submit">Lähetä</button></form>
+</section>
+<section class="card action">
+<h2>Kun olet valmis</h2><p>Sinun ei tarvitse odottaa, että tekoäly pyytää lupaa. Voit lähettää suunnitelman milloin tahansa tästä painikkeesta.</p>
+<button class="primary" id="openForm" type="button">Valmis – lähetä suunnittelupyyntö</button>
+<form id="requestForm" hidden>
+<h2>Lähetä suunnittelupyyntö</h2><p class="muted">Täytä yhteystietosi. Jos et tiedä tarkkoja mittoja, voit jättää oletusmitat ja kertoa lisätiedoista keskustelussa.</p>
+<div class="grid">
+<div class="field"><label for="name">Nimi *</label><input id="name" maxlength="120" autocomplete="name" required></div>
+<div class="field"><label for="email">Sähköposti *</label><input id="email" type="email" maxlength="254" autocomplete="email" required></div>
 <div class="field"><label for="length">Pituus (mm)</label><input id="length" type="number" min="1" max="2500" value="100" required></div>
 <div class="field"><label for="width">Leveys (mm)</label><input id="width" type="number" min="1" max="2500" value="80" required></div>
 <div class="field"><label for="height">Korkeus (mm)</label><input id="height" type="number" min="1" max="2600" value="50" required></div>
-<div class="field"><label for="material">Materiaali</label><select id="material"><option value="pla">PLA</option><option value="petg">PETG</option><option value="abs">ABS</option><option value="other">Muu / en tiedä</option></select></div>
-</div><label style="display:flex;gap:10px;align-items:flex-start;margin:12px 0;color:var(--muted);font-size:14px"><input id="confirmDetails" type="checkbox" required style="width:auto;margin-top:5px">Olen tarkistanut yhteystietoni ja tuotteen tiedot. Hyväksyn, että suunnittelupyyntö lähetetään käsiteltäväksi.</label><button id="submitRequest">Vahvista ja lähetä pyyntö</button><div id="notice" role="status"></div></form>
-<div class="small">Tässä versiossa chat ja pyyntöjen tallennus toimivat. 3D-esikatselu, automaattinen mallinnus, kuvalataus sekä STL-/3MF-vienti eivät ole vielä käytössä.</div>
-</section></main>
+<div class="field"><label for="material">Materiaali</label><select id="material"><option value="pla">PLA</option><option value="petg">PETG</option><option value="abs">ABS</option><option value="other">En tiedä / muu</option></select></div>
+</div>
+<label id="consent"><input id="confirmDetails" type="checkbox" required><span>Olen tarkistanut tiedot ja hyväksyn, että suunnittelupyyntö lähetetään käsiteltäväksi.</span></label>
+<button class="primary" id="submitRequest" type="submit">Lähetä pyyntö</button><div id="notice" role="status"></div>
+</form>
+</section>
+<p class="foot">Tässä versiossa keskustelu ja suunnittelupyyntöjen tallennus toimivat. Automaattinen 3D-mallinnus, esikatselu ja STL-/3MF-tiedostojen luonti eivät ole vielä käytössä.</p>
+</main>
 <script>
 const API_URL="https://3d-mallinnus-palvelu-6af9.fra.appwrite.run";
-const $=id=>document.getElementById(id), chat=$("chat"), messages=[];let consentAsked=false,approved=false;
+const $=id=>document.getElementById(id),chat=$("chat"),messages=[];
 function add(role,text){const d=document.createElement("div");d.className="msg "+role;d.textContent=text;chat.appendChild(d);chat.scrollTop=chat.scrollHeight}
-function transcript(){return messages.map(m=>(m.role==="user"?"Asiakas: ":"Tekoäly: ")+m.content).join("\\n\\n")}
-function askApproval(){if(consentAsked||approved||messages.filter(m=>m.role==="user").length<3)return;consentAsked=true;const q="Haluatko lähettää tämän suunnittelupyynnön eteenpäin, jotta tuotteesi valmistelu voi alkaa? Valitsemalla kyllä pyydän seuraavaksi yhteystietosi ja tuotteen mitat.";messages.push({role:"assistant",content:q});add("assistant",q);$("approval").hidden=false;}
-$("approve").addEventListener("click",()=>{approved=true;$("approval").hidden=true;$("requestForm").hidden=false;$("requestForm").scrollIntoView({behavior:"smooth",block:"start"});});
-$("decline").addEventListener("click",()=>{$("approval").hidden=true;consentAsked=false;add("assistant","Ei hätää! Voimme jatkaa suunnittelua. Kerro vain, mitä haluaisit vielä muuttaa tai tarkentaa.");});
-$("chatForm").addEventListener("submit",async e=>{
-e.preventDefault();const value=$("message").value.trim();if(!value)return;
-const lastAssistant=[...messages].reverse().find(m=>m.role==="assistant");
-const affirmative=/^(kyllä|joo|juu|kyllä kiitos|joo kiitos|haluan|sopii|ok|okay|yes|yep|ja|absolut|gärna|lähetä( se)?( pyyntö)?( eteenpäin)?( kiitos)?|lähetä pyyntö( eteenpäin)?( kiitos)?|lähetä pyyntö eteenpäin|lähetä eteenpäin kiitos|eteenpäin( kiitos)?|voit lähettää( sen| pyynnön)?( eteenpäin)?( kiitos)?|kyllä,? lähetä( se| pyyntö)?( eteenpäin)?( kiitos)?)[.! ]*$/i.test(value);
-const previousAskedToSend=!!lastAssistant&&/(haluatko.{0,100}(lähettää|lähettämistä|viedä|toimittaa)|lähetetäänkö|lähetä.{0,80}(eteenpäin|pyyntö)|suunnittelupyyntö.{0,80}(eteenpäin|lähettää)|send.{0,80}(request|forward)|submit.{0,80}request|skicka.{0,80}(vidare|förfrågan))/is.test(lastAssistant.content);
-if(affirmative&&(consentAsked||previousAskedToSend)){
- messages.push({role:"user",content:value});add("user",value);approved=true;consentAsked=false;$("approval").hidden=true;$("requestForm").hidden=false;add("assistant","Hienoa! Pyyntö voidaan lähettää tämän lomakkeen kautta. Täytä yhteystietosi ja tarkista tuotteen mitat, ja paina sitten Vahvista ja lähetä pyyntö.");$("requestForm").scrollIntoView({behavior:"smooth",block:"start"});$("message").value="";return;
+function transcript(){return messages.map(m=>(m.role==="user"?"Asiakas: ":"Suunnitteluavustaja: ")+m.content).join("\n\n")}
+async function sendMessage(value){
+ if(!value.trim())return;
+ messages.push({role:"user",content:value.trim()});add("user",value.trim());$("message").value="";$("send").disabled=true;$("send").textContent="...";
+ try{
+  const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"chat",messages:[{role:"user",content:"KIELIOHJE: Vastaa aina asiakkaan viimeisimmällä käyttämällä kielellä. Suomenkieliselle suomeksi, ruotsinkieliselle ruotsiksi ja englanninkieliselle englanniksi. Olet ystävällinen ja erittäin helppokäyttöinen 3D-esineiden suunnitteluavustaja. Käytä lyhyitä, selkeitä lauseita. Kysy vain yksi helppo kysymys kerrallaan. Älä kysy asiakkaalta asiaa, jonka hän on jo kertonut. Jos asiakas sanoo yllätä minut tai valitse puolestani, tee järkevät valinnat itse ja kerro ne lyhyesti. Älä pyydä asiakasta hyväksymään lähettämistä chatissa äläkä väitä, ettet voi lähettää pyyntöä. Asiakas lähettää pyynnön sivun erillisellä painikkeella. Älä väitä luoneesi STL-tiedostoa tai 3D-mallia, jos sitä ei ole luotu."},...messages]})});
+  const d=await r.json();if(!r.ok||!d.success)throw Error(d.error||"Palvelu ei vastannut");
+  messages.push({role:"assistant",content:d.reply});add("assistant",d.reply);
+ }catch(err){add("assistant","Viestin lähetys ei onnistunut. Tarkista internetyhteys ja kokeile uudelleen.");console.error(err)}
+ finally{$("send").disabled=false;$("send").textContent="Lähetä";$("message").focus()}
 }
-messages.push({role:"user",content:value});if(approved){approved=false;$("requestForm").hidden=true;$("confirmDetails").checked=false;}consentAsked=false;add("user",value);$("message").value="";$("send").disabled=true;$("send").textContent="Hetki...";
-try{const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"chat",messages:[{role:"user",content:"TÄRKEÄ KIELIOHJE: Vastaa asiakkaalle samalla kielellä kuin hänen viimeisin viestinsä. Jos viimeisin viesti on suomeksi, vastaa suomeksi. Jos ruotsiksi, vastaa ruotsiksi. Jos englanniksi, vastaa englanniksi. Älä vastaa englanniksi, jos asiakas kirjoittaa suomeksi."},...messages]})});const d=await r.json();if(!r.ok||!d.success)throw Error(d.error||"Virhe");messages.push({role:"assistant",content:d.reply});add("assistant",d.reply);askApproval()}
-catch(err){add("assistant","Viestin lähetys epäonnistui. Yritä hetken kuluttua uudelleen.");console.error(err)}
-finally{$("send").disabled=false;$("send").textContent="Lähetä";$("message").focus()}
-});
+$("chatForm").addEventListener("submit",e=>{e.preventDefault();sendMessage($("message").value)});
+document.querySelectorAll("[data-prompt]").forEach(b=>b.addEventListener("click",()=>sendMessage(b.dataset.prompt)));
+$("openForm").addEventListener("click",()=>{const form=$("requestForm");form.hidden=false;$("openForm").textContent="Suunnittelupyyntölomake avattu";form.scrollIntoView({behavior:"smooth",block:"start"});$("name").focus()});
 $("requestForm").addEventListener("submit",async e=>{
-e.preventDefault();if(!approved){$("notice").textContent="Hyväksy ensin suunnitelman lähettäminen keskustelun yläpuolella.";return}if(!messages.some(m=>m.role==="user")){$("notice").textContent="Kirjoita ensin ideastasi keskusteluun.";return}
-const b=$("submitRequest");b.disabled=true;b.textContent="Lähetetään...";$("notice").textContent="";
-try{const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
-action:"submit",asiakas_nimi:$("name").value.trim(),asiakas_email:$("email").value.trim(),esineen_kuvaus:transcript(),
-pituus_mm:$("length").value,leveys_mm:$("width").value,korkeus_mm:$("height").value,materiaali:$("material").value
-})});const d=await r.json();if(!r.ok||!d.success)throw Error(d.error||"Tallennus epäonnistui");
-$("notice").textContent="Pyyntö vastaanotettu! Tunniste: "+d.id;b.textContent="Pyyntö lähetetty"}
-catch(err){$("notice").textContent="Lähetys epäonnistui. Tarkista tiedot ja yritä uudelleen.";b.disabled=false;b.textContent="Lähetä suunnittelupyyntö";console.error(err)}
+ e.preventDefault();const b=$("submitRequest");b.disabled=true;b.textContent="Lähetetään...";$("notice").textContent="";
+ try{
+  const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"submit",asiakas_nimi:$("name").value.trim(),asiakas_email:$("email").value.trim(),esineen_kuvaus:transcript(),pituus_mm:$("length").value,leveys_mm:$("width").value,korkeus_mm:$("height").value,materiaali:$("material").value})});
+  const d=await r.json();if(!r.ok||!d.success)throw Error(d.error||"Tallennus epäonnistui");
+  $("notice").textContent="Pyyntö vastaanotettu! Tunniste: "+d.id;b.textContent="Pyyntö lähetetty";$("requestForm").querySelectorAll("input,select,button").forEach(x=>x.disabled=true);
+ }catch(err){$("notice").textContent="Lähetys epäonnistui. Yritä hetken kuluttua uudelleen.";b.disabled=false;b.textContent="Lähetä pyyntö";console.error(err)}
 });
 </script></body></html>
