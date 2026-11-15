@@ -39,7 +39,7 @@ $("decline").addEventListener("click",()=>{$("approval").hidden=true;consentAske
 $("chatForm").addEventListener("submit",async e=>{
 e.preventDefault();const value=$("message").value.trim();if(!value)return;
 messages.push({role:"user",content:value});if(approved){approved=false;$("requestForm").hidden=true;$("confirmDetails").checked=false;}consentAsked=false;add("user",value);$("message").value="";$("send").disabled=true;$("send").textContent="Hetki...";
-try{const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"chat",messages})});const d=await r.json();if(!r.ok||!d.success)throw Error(d.error||"Virhe");messages.push({role:"assistant",content:d.reply});add("assistant",d.reply);askApproval()}
+try{const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"chat",messages:[{role:"user",content:"TÄRKEÄ KIELIOHJE: Vastaa asiakkaalle samalla kielellä kuin hänen viimeisin viestinsä. Jos viimeisin viesti on suomeksi, vastaa suomeksi. Jos ruotsiksi, vastaa ruotsiksi. Jos englanniksi, vastaa englanniksi. Älä vastaa englanniksi, jos asiakas kirjoittaa suomeksi."},...messages]})});const d=await r.json();if(!r.ok||!d.success)throw Error(d.error||"Virhe");messages.push({role:"assistant",content:d.reply});add("assistant",d.reply);askApproval()}
 catch(err){add("assistant","Viestin lähetys epäonnistui. Yritä hetken kuluttua uudelleen.");console.error(err)}
 finally{$("send").disabled=false;$("send").textContent="Lähetä";$("message").focus()}
 });
