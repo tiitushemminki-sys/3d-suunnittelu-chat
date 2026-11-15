@@ -1,0 +1,40 @@
+name: Build Android APK
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'admin/**'
+      - 'android-app/**'
+      - '.github/workflows/build-android.yml'
+    branches: [main]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: android-actions/setup-android@v3
+      - name: Install Capacitor
+        working-directory: android-app
+        run: npm install
+      - name: Sync Android project
+        working-directory: android-app
+        run: npx cap sync android
+      - name: Build debug APK
+        working-directory: android-app/android
+        run: ./gradlew assembleDebug
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: 3d-yllapito-debug-apk
+          path: android-app/android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 30
