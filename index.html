@@ -39,7 +39,7 @@ $("decline").addEventListener("click",()=>{$("approval").hidden=true;consentAske
 $("chatForm").addEventListener("submit",async e=>{
 e.preventDefault();const value=$("message").value.trim();if(!value)return;
 const lastAssistant=[...messages].reverse().find(m=>m.role==="assistant");
-const affirmative=/^(kyllä|joo|juu|kyllä kiitos|joo kiitos|haluan|sopii|ok|okay|yes|yep|ja|absolut|gärna)[.! ]*$/i.test(value);
+const affirmative=/^(kyllä|joo|juu|kyllä kiitos|joo kiitos|haluan|sopii|ok|okay|yes|yep|ja|absolut|gärna|lähetä( se)?( eteenpäin)?( kiitos)?|lähetä eteenpäin kiitos|eteenpäin( kiitos)?|voit lähettää( sen)?( eteenpäin)?( kiitos)?|kyllä,? lähetä( se)?( eteenpäin)?( kiitos)?)[.! ]*$/i.test(value);
 const previousAskedToSend=!!lastAssistant&&/(eteenpäin|lähettää|lähetetään|lähettämistä|suunnittelupyyntö|send|submit|forward|skicka|vidare)/i.test(lastAssistant.content);
 if(affirmative&&(consentAsked||previousAskedToSend)){
  messages.push({role:"user",content:value});add("user",value);approved=true;consentAsked=false;$("approval").hidden=true;$("requestForm").hidden=false;add("assistant","Hienoa! Pyyntö voidaan lähettää tämän lomakkeen kautta. Täytä yhteystietosi ja tarkista tuotteen mitat, ja paina sitten Vahvista ja lähetä pyyntö.");$("requestForm").scrollIntoView({behavior:"smooth",block:"start"});$("message").value="";return;
