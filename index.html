@@ -2,199 +2,174 @@
 <html lang="fi">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Suunnittele 3D-esine</title>
+<meta name="theme-color" content="#081426">
+<title>Suunnittele 3D-malli keskustelemalla</title>
 <style>
-:root{color-scheme:dark;--bg:#09111e;--panel:#142238;--line:#30445f;--blue:#2878ed;--text:#f5f7fb;--muted:#b7c4d6}
-*{box-sizing:border-box}body{margin:0;background:linear-gradient(145deg,#08111f,#172a45);color:var(--text);font:16px/1.5 Arial,sans-serif;min-height:100vh}
-main{max-width:760px;margin:auto;padding:28px 16px 50px}.language{position:relative;top:auto;right:auto;z-index:1;display:flex;justify-content:flex-end;align-items:center;gap:12px;margin:0 0 18px auto;padding:10px 14px;width:max-content;max-width:calc(100vw - 24px);background:#ffffff;color:#10213a;border:2px solid #2878ed;border-radius:14px;box-shadow:0 5px 22px #0008;font-size:16px;font-weight:700}.language select{width:auto;min-width:155px;padding:10px 34px 10px 12px;background:#10213a;color:#fff;border:2px solid #2878ed;border-radius:9px;font-size:16px;font-weight:700}.intro{text-align:center;margin:8px 0 22px}.intro h1{font-size:clamp(28px,6vw,40px);line-height:1.1;margin:0 0 12px}.intro p{color:var(--muted);margin:0}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 16px 45px #0004}
-.topline{padding:13px 18px;border-bottom:1px solid var(--line);font-size:14px;color:var(--muted)}
-#chat{height: min(48vh,460px);min-height:280px;overflow:auto;padding:18px;display:flex;flex-direction:column;gap:12px}
-.msg{max-width:88%;padding:12px 15px;border-radius:15px;white-space:pre-wrap;overflow-wrap:anywhere}.assistant{background:#213752;align-self:flex-start}.user{background:#1766cf;align-self:flex-end}
-.composer{display:flex;gap:9px;padding:13px;border-top:1px solid var(--line)}textarea,input,select{font:inherit;color:var(--text);background:#0b1728;border:1px solid #3a506d;border-radius:11px;padding:12px;width:100%}
-textarea{resize:vertical;min-height:50px;max-height:130px}.composer button{min-width:92px}
-button{border:0;border-radius:11px;padding:12px 16px;background:var(--blue);color:white;font-weight:700;font-size:15px;cursor:pointer}button:disabled{opacity:.55;cursor:wait}
-.examples{padding:0 16px 15px;display:flex;flex-wrap:wrap;gap:8px}.examples button{background:#263c59;border:1px solid #3d5677;font-size:13px;padding:9px 12px}
-.action{margin-top:15px;padding:18px}.action h2{font-size:20px;margin:0 0 5px}.action p,.muted{color:var(--muted);font-size:14px;margin:0 0 13px}.primary{width:100%;padding:15px;font-size:16px}
-#requestForm{margin-top:16px;padding:18px;border:1px solid var(--line);border-radius:15px;background:#0e1a2b}#requestForm h2{margin:0 0 5px;font-size:20px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:15px 0}.field label{display:block;font-size:13px;color:var(--muted);margin-bottom:5px}
-#consent{display:flex;align-items:flex-start;gap:9px;color:var(--muted);font-size:13px;margin:14px 0}#consent input{width:auto;margin-top:4px}#notice{margin-top:12px;color:#c5dcff;overflow-wrap:anywhere;min-height:22px}
-.foot{font-size:12px;color:var(--muted);text-align:center;margin:16px 4px 0}
-@media(max-width:560px){main{padding:18px 11px 35px}.grid{grid-template-columns:1fr}#chat{height:48vh;min-height:260px}.msg{max-width:95%}.composer{align-items:stretch}.composer button{min-width:76px;padding:10px}}
-
-.modelbox{margin:18px 0;padding:15px;background:#142238;border:1px solid #3a506d;border-radius:14px}
-.modelbox h3{margin:0 0 5px}.modelbox>label{display:block;margin:10px 0 5px;color:var(--muted);font-size:13px}
-#preview3d{height:330px;background:#07101d;border:1px solid #30445f;border-radius:12px;overflow:hidden;position:relative;margin-top:12px}
-#preview3d canvas{display:block;width:100%;height:100%}#previewLoading{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);pointer-events:none}
-.exportrow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
-#modelNotice{min-height:20px;color:#c5dcff;font-size:13px;margin-top:8px}
-@media(max-width:560px){#preview3d{height:270px}.exportrow{grid-template-columns:1fr}}
-
+:root{color-scheme:dark;--bg:#081426;--panel:#10213a;--panel2:#0b1a2e;--line:#29415e;--blue:#1688ff;--blue2:#0c63d6;--text:#f5f8fc;--muted:#a9bad0;--green:#4bd49a;--warn:#f5ca72}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% -10%,#1b3a60 0,#0b1a2e 45%,#07111f 100%);color:var(--text);font:16px/1.5 Inter,Arial,sans-serif}
+main{max-width:1080px;margin:auto;padding:24px 18px 48px}.bar{display:flex;justify-content:flex-end;margin-bottom:18px}.language{display:flex;gap:9px;align-items:center;color:var(--muted);font-size:13px}.language select{width:auto;min-width:125px}
+select,input,textarea{font:inherit;color:var(--text);background:#091729;border:1px solid #34506e;border-radius:11px;padding:11px 12px;width:100%}
+.intro{margin:0 auto 24px;text-align:center;max-width:760px}.logo{width:48px;height:48px;display:grid;place-items:center;border-radius:15px;margin:0 auto 13px;background:linear-gradient(145deg,#1688ff,#074ba4);box-shadow:0 8px 24px #006be755;font-size:23px}.intro h1{font-size:clamp(28px,5vw,42px);line-height:1.12;margin:0 0 10px;letter-spacing:-.7px}.intro p{margin:0;color:var(--muted)}
+.layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(280px,.85fr);gap:16px;align-items:start}.card{background:linear-gradient(180deg,#11233c,#0c1a2d);border:1px solid var(--line);border-radius:19px;box-shadow:0 18px 45px #0003;overflow:hidden}.cardhead{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:11px}.headicon{width:34px;height:34px;border-radius:10px;background:#163b65;display:grid;place-items:center}.cardhead h2{font-size:17px;margin:0}.cardhead p{font-size:12px;color:var(--muted);margin:1px 0 0}
+#chat{height:450px;min-height:320px;overflow:auto;padding:18px;display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth}.msg{max-width:88%;padding:12px 15px;border-radius:15px;white-space:pre-wrap;overflow-wrap:anywhere}.assistant{background:#1a3453;align-self:flex-start;border-bottom-left-radius:5px}.user{background:#1168cb;align-self:flex-end;border-bottom-right-radius:5px}.typing{color:var(--muted);font-size:13px;padding:0 18px 12px}
+.composer{display:flex;gap:9px;padding:13px;border-top:1px solid var(--line);background:#0b1a2d}.composer textarea{resize:vertical;min-height:48px;max-height:140px}.composer button{min-width:100px}button{border:0;border-radius:11px;padding:12px 16px;background:var(--blue);color:white;font-weight:700;font-size:14px;cursor:pointer;transition:background .15s,transform .15s}button:hover:not(:disabled){background:#3298ff;transform:translateY(-1px)}button:disabled{opacity:.45;cursor:not-allowed;transform:none}.examples{display:flex;gap:8px;flex-wrap:wrap;padding:0 15px 15px}.examples button{font-size:12px;font-weight:600;background:#1a304c;border:1px solid #385372;padding:8px 11px}
+.side{display:grid;gap:16px}.statusbox{padding:17px}.statusline{display:flex;align-items:center;gap:9px;margin-bottom:14px}.dot{width:9px;height:9px;border-radius:50%;background:#6e8198;flex:0 0 auto}.dot.ready{background:var(--green);box-shadow:0 0 12px #4bd49a88}.statusline strong{font-size:14px}.statusline span:last-child{font-size:12px;color:var(--muted);margin-left:auto}
+.modelname{font-size:20px;font-weight:750;line-height:1.2;margin:0 0 8px}.modeldesc{font-size:13px;color:var(--muted);margin:0 0 15px}.facts{display:grid;gap:9px;margin:0}.fact{display:flex;justify-content:space-between;gap:14px;border-top:1px solid #203650;padding-top:9px;font-size:13px}.fact dt{color:var(--muted)}.fact dd{margin:0;text-align:right;font-weight:650;overflow-wrap:anywhere}.empty{padding:13px;border:1px dashed #3a5573;border-radius:12px;color:var(--muted);font-size:13px}
+.downloads{padding:16px 17px}.downloads h3{font-size:15px;margin:0 0 5px}.downloads p{font-size:12px;color:var(--muted);margin:0 0 13px}.downloadrow{display:grid;grid-template-columns:1fr 1fr;gap:9px}.downloadrow button{padding:11px 8px;font-size:13px}.secondary{background:#213956;border:1px solid #3a587a}.notice{font-size:12px;min-height:18px;color:#c7ddf6;margin-top:10px}.notice.error{color:#ff9999}.notice.success{color:var(--green)}
+.steps{padding:16px 17px}.steps h3{margin:0 0 9px;font-size:15px}.steps ol{margin:0;padding-left:19px;color:var(--muted);font-size:12px}.steps li{padding:3px 0}
+.action{margin-top:17px;padding:18px}.action h2{font-size:20px;margin:0 0 5px}.muted{font-size:13px;color:var(--muted);margin:0 0 14px}#requestForm{margin-top:16px;padding:18px;border:1px solid var(--line);border-radius:15px;background:#0b1a2d}#requestForm h2{margin:0 0 5px;font-size:20px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:15px 0}.field label{display:block;font-size:13px;color:var(--muted);margin-bottom:5px}#consent{display:flex;align-items:flex-start;gap:9px;color:var(--muted);font-size:13px;margin:14px 0}#consent input{width:auto;margin-top:4px}.primary{width:100%;padding:14px;font-size:15px}.foot{font-size:11px;color:#8195ae;text-align:center;margin:18px 4px 0}
+@media(max-width:780px){main{padding:16px 11px 35px}.layout{grid-template-columns:1fr}.side{grid-template-columns:1fr 1fr}.steps{grid-column:1/-1}#chat{height:430px}}
+@media(max-width:520px){.side{grid-template-columns:1fr}.steps{grid-column:auto}.composer{align-items:stretch}.composer button{min-width:76px;padding:10px}.msg{max-width:94%}.grid{grid-template-columns:1fr}.downloadrow{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body><main>
-<div class="language"><label for="languageSelect" id="languageLabel">Kieli</label><select id="languageSelect" aria-label="Valitse kieli"><option value="fi">Suomi</option><option value="sv">Svenska</option><option value="en">English</option></select></div>
-<header class="intro"><h1 id="pageTitle">Suunnittele oma 3D-esine</h1><p id="pageIntro">Kerro ideasi omin sanoin. Tekoäly auttaa suunnittelussa – sinun ei tarvitse osata 3D-mallinnusta.</p></header>
+<div class="bar"><div class="language"><label for="languageSelect" id="languageLabel">Kieli</label><select id="languageSelect" aria-label="Valitse kieli"><option value="fi">Suomi</option><option value="sv">Svenska</option><option value="en">English</option></select></div></div>
+<header class="intro"><div class="logo" aria-hidden="true">⬡</div><h1 id="pageTitle">Suunnittele oma 3D-malli keskustelemalla</h1><p id="pageIntro">Kuvaile ideasi. Tekoäly muokkaa mallia jokaisen viestisi perusteella – voit pyytää muutoksia aivan tavallisella kielellä.</p></header>
+<div class="layout">
 <section class="card">
-<div class="topline" id="chatHint">💬 Keskustele suunnitteluavustajan kanssa. Kysy tai kerro vain yksi asia kerrallaan.</div>
-<div id="chat" aria-live="polite"><div class="msg assistant" id="welcome">Hei! 😊 Millaisen esineen haluaisit? Voit kertoa idean vaikka yhdellä lauseella.</div></div>
-<div class="examples" aria-label="Esimerkkejä"><button type="button" data-prompt-key="surprise" id="surpriseBtn">Yllätä minut</button><button type="button" data-prompt-key="decor" id="decorBtn">Koriste</button><button type="button" data-prompt-key="useful" id="usefulBtn">Käyttöesine</button></div>
-<form class="composer" id="chatForm"><textarea id="message" placeholder="Kirjoita tähän..." required aria-label="Kirjoita viesti"></textarea><button id="send" type="submit">Lähetä</button></form>
+ <div class="cardhead"><div class="headicon">💬</div><div><h2 id="chatTitle">Suunnittelukeskustelu</h2><p id="chatHint">Kerro idea ja pyydä muutoksia keskustelun aikana.</p></div></div>
+ <div id="chat" aria-live="polite"><div class="msg assistant" id="welcome">Hei! Millaisen 3D-esineen haluaisit suunnitella? Kerro vaikka vain alustava idea.</div></div>
+ <div class="typing" id="typing" hidden>Suunnitteluavustaja miettii…</div>
+ <div class="examples"><button type="button" data-prompt-key="surprise" id="surpriseBtn">Yllätä minut</button><button type="button" data-prompt-key="decor" id="decorBtn">Koriste</button><button type="button" data-prompt-key="useful" id="usefulBtn">Käyttöesine</button></div>
+ <form class="composer" id="chatForm"><textarea id="message" placeholder="Kerro ideasi tai pyydä muutosta..." required aria-label="Kirjoita viesti"></textarea><button id="send" type="submit">Lähetä</button></form>
 </section>
-<section class="card action">
-<div class="modelbox">
- <h3 id="modelTitle">3D-mallin esikatselu</h3>
- <p class="muted" id="modelInfo">Valitse mallityyppi. Voit pyörittää mallia hiirellä tai sormella.</p>
- <label for="modelType" id="modelTypeLabel">Mallityyppi</label>
- <select id="modelType"><option value="box">Avoin säilytyslaatikko</option><option value="stand">Puhelinteline</option><option value="hook">Seinäkoukku</option></select>
- <div id="preview3d"><div id="previewLoading">3D-esikatselu latautuu…</div></div>
- <div class="exportrow"><button type="button" id="downloadStl">Lataa STL</button><button type="button" id="download3mf">Lataa 3MF</button></div>
- <div id="modelNotice" role="status"></div>
+<aside class="side">
+ <section class="card">
+  <div class="cardhead"><div class="headicon">🧩</div><div><h2 id="modelTitle">Nykyinen mallisuunnitelma</h2><p id="modelSub">Päivittyy keskustelun mukana</p></div></div>
+  <div class="statusbox">
+   <div class="statusline"><span class="dot" id="modelDot"></span><strong id="modelStatus">Odottaa ensimmäistä ideaa</strong><span id="modelRevision">Versio 0</span></div>
+   <div id="modelEmpty" class="empty">Kun kerrot, mitä haluat tehdä, tekoäly kokoaa mallin mitat ja rakenteen tähän. Pyydä sen jälkeen muutoksia keskustelussa.</div>
+   <div id="modelDetails" hidden><h3 class="modelname" id="modelName"></h3><p class="modeldesc" id="modelDescription"></p><dl class="facts"><div class="fact"><dt id="dimensionsLabel">Mitat</dt><dd id="modelDimensions">–</dd></div><div class="fact"><dt id="partsLabel">Osat</dt><dd id="modelParts">–</dd></div><div class="fact"><dt id="materialInfoLabel">Materiaali</dt><dd id="modelMaterial">PLA</dd></div></dl></div>
+  </div>
+  <div class="downloads"><h3 id="downloadTitle">Lataa päivitetty malli</h3><p id="downloadInfo">Tiedostot muodostetaan viimeisimmän keskustelussa sovitun mallin perusteella.</p><div class="downloadrow"><button id="downloadStl" disabled>↓ STL</button><button id="download3mf" class="secondary" disabled>↓ 3MF</button></div><div id="modelNotice" class="notice" role="status"></div></div>
+ </section>
+ <section class="card steps"><h3 id="stepsTitle">Näin suunnittelu toimii</h3><ol><li id="step1">Kerro, millaisen esineen haluat.</li><li id="step2">Pyydä muutoksia: koko, muoto, reiät tai yksityiskohdat.</li><li id="step3">Mallin tiedot päivittyvät keskustelun perusteella.</li><li id="step4">Lataa uusin STL- tai 3MF-tiedosto.</li></ol></section>
+</aside>
 </div>
-
-<h2 id="readyTitle">Kun olet valmis</h2><p id="readyText">Sinun ei tarvitse odottaa, että tekoäly pyytää lupaa. Voit lähettää suunnitelman milloin tahansa tästä painikkeesta.</p>
-<button class="primary" id="openForm" type="button">Valmis – lähetä suunnittelupyyntö</button>
+<section class="card action">
+<h2 id="readyTitle">Lähetä suunnittelupyyntö</h2><p class="muted" id="readyText">Kun olet tyytyväinen keskustelussa muodostettuun malliin, voit lähettää pyynnön käsiteltäväksi.</p>
+<button class="primary" id="openForm" type="button">Avaa yhteystietolomake</button>
 <form id="requestForm" hidden>
-<h2 id="formTitle">Lähetä suunnittelupyyntö</h2><p class="muted" id="formIntro">Täytä yhteystietosi. Jos et tiedä tarkkoja mittoja, voit jättää oletusmitat ja kertoa lisätiedoista keskustelussa.</p>
+<h2 id="formTitle">Yhteystiedot ja mallin lähetys</h2><p class="muted" id="formIntro">Mallin tämänhetkinen kuvaus ja mitat liitetään pyyntöön automaattisesti.</p>
 <div class="grid">
 <div class="field"><label for="name" id="nameLabel">Nimi *</label><input id="name" maxlength="120" autocomplete="name" required></div>
 <div class="field"><label for="email" id="emailLabel">Sähköposti *</label><input id="email" type="email" maxlength="254" autocomplete="email" required></div>
-<div class="field"><label for="length" id="lengthLabel">Pituus (mm)</label><input id="length" type="number" min="1" max="2500" value="100" required></div>
-<div class="field"><label for="width" id="widthLabel">Leveys (mm)</label><input id="width" type="number" min="1" max="2500" value="80" required></div>
-<div class="field"><label for="height" id="heightLabel">Korkeus (mm)</label><input id="height" type="number" min="1" max="2600" value="50" required></div>
+<div class="field"><label for="length" id="lengthLabel">Pituus (mm)</label><input id="length" type="number" min="1" max="250" value="100" required></div>
+<div class="field"><label for="width" id="widthLabel">Leveys (mm)</label><input id="width" type="number" min="1" max="250" value="80" required></div>
+<div class="field"><label for="height" id="heightLabel">Korkeus (mm)</label><input id="height" type="number" min="1" max="260" value="50" required></div>
 <div class="field"><label for="material" id="materialLabel">Materiaali</label><select id="material"><option value="pla">PLA</option><option value="petg">PETG</option><option value="abs">ABS</option><option value="other" id="otherMaterial">En tiedä / muu</option></select></div>
 </div>
-
-
 <label id="consent"><input id="confirmDetails" type="checkbox" required><span id="consentText">Olen tarkistanut tiedot ja hyväksyn, että suunnittelupyyntö lähetetään käsiteltäväksi.</span></label>
-<button class="primary" id="submitRequest" type="submit">Lähetä pyyntö</button><div id="notice" role="status"></div>
+<button class="primary" id="submitRequest" type="submit">Lähetä pyyntö</button><div id="notice" class="notice" role="status"></div>
 </form>
 </section>
-<p class="foot">Keskustelu, 3D-esikatselu sekä STL- ja 3MF-tiedostojen lataus ovat käytössä valituissa mallityypeissä.</p>
+<p class="foot" id="footNote">3D-esikatselua ei käytetä. Mallin rakenne päivittyy tekoälykeskustelun perusteella ja tiedostot luodaan viimeisimmästä malliversiosta.</p>
 </main>
 <script>
 const API_URL="https://3d-mallinnus-palvelu-6af9.fra.appwrite.run";
 const $=id=>document.getElementById(id);
 const translations={
-fi:{title:"Suunnittele oma 3D-esine",intro:"Kerro ideasi omin sanoin. Tekoäly auttaa suunnittelussa – sinun ei tarvitse osata 3D-mallinnusta.",hint:"💬 Keskustele suunnitteluavustajan kanssa. Kysy tai kerro vain yksi asia kerrallaan.",welcome:"Hei! 😊 Millaisen esineen haluaisit? Voit kertoa idean vaikka yhdellä lauseella.",surprise:"Yllätä minut",decor:"Koriste",useful:"Käyttöesine",placeholder:"Kirjoita tähän...",send:"Lähetä",ready:"Kun olet valmis",readyText:"Sinun ei tarvitse odottaa, että tekoäly pyytää lupaa. Voit lähettää suunnitelman milloin tahansa tästä painikkeesta.",open:"Valmis – lähetä suunnittelupyyntö",form:"Lähetä suunnittelupyyntö",formIntro:"Täytä yhteystietosi. Jos et tiedä tarkkoja mittoja, voit jättää oletusmitat ja kertoa lisätiedoista keskustelussa.",name:"Nimi *",email:"Sähköposti *",length:"Pituus (mm)",width:"Leveys (mm)",height:"Korkeus (mm)",material:"Materiaali",other:"En tiedä / muu",consent:"Olen tarkistanut tiedot ja hyväksyn, että suunnittelupyyntö lähetetään käsiteltäväksi.",submit:"Lähetä pyyntö",sending:"Lähetetään...",success:"Pyyntö vastaanotettu! Tunniste: ",error:"Lähetys epäonnistui. Yritä hetken kuluttua uudelleen.",chatError:"Viestin lähetys ei onnistunut. Tarkista internetyhteys ja kokeile uudelleen.",foot:"Keskustelu, 3D-esikatselu sekä STL- ja 3MF-tiedostojen lataus ovat käytössä valituissa mallityypeissä.",language:"Kieli",surprisePrompt:"Yllätä minut ja keksi hyödyllinen pieni 3D-tulostettava esine.",decorPrompt:"Haluan suunnitella koristeen.",usefulPrompt:"Haluan suunnitella käytännöllisen arjen apuvälineen.",sys:"Vastaa aina suomeksi. Olet ystävällinen ja helppokäyttöinen 3D-esineiden suunnitteluavustaja. Käytä lyhyitä, selkeitä lauseita ja kysy vain yksi helppo kysymys kerrallaan. Älä kysy uudelleen asioita, jotka asiakas on jo kertonut. Jos asiakas pyytää yllättämään tai valitsemaan puolestaan, tee järkevät valinnat itse. Älä pyydä hyväksymään lähettämistä chatissa. Älä väitä luoneesi STL-tiedostoa tai 3D-mallia, jos sitä ei ole luotu."},
-sv:{title:"Designa ditt eget 3D-föremål",intro:"Beskriv din idé med egna ord. AI hjälper dig med designen – du behöver inte kunna 3D-modellering.",hint:"💬 Chatta med designassistenten. Fråga eller berätta en sak i taget.",welcome:"Hej! 😊 Vilket föremål vill du skapa? Beskriv din idé med en mening.",surprise:"Överraska mig",decor:"Dekoration",useful:"Bruksföremål",placeholder:"Skriv här...",send:"Skicka",ready:"När du är klar",readyText:"Du behöver inte vänta på att AI frågar. Du kan skicka din designförfrågan när som helst med knappen här.",open:"Klar – skicka designförfrågan",form:"Skicka designförfrågan",formIntro:"Fyll i dina kontaktuppgifter. Om du inte känner till måtten kan du behålla standardmåtten och beskriva mer i chatten.",name:"Namn *",email:"E-post *",length:"Längd (mm)",width:"Bredd (mm)",height:"Höjd (mm)",material:"Material",other:"Vet inte / annat",consent:"Jag har kontrollerat uppgifterna och godkänner att designförfrågan skickas för behandling.",submit:"Skicka förfrågan",sending:"Skickar...",success:"Förfrågan mottagen! Referens: ",error:"Det gick inte att skicka. Försök igen.",chatError:"Meddelandet kunde inte skickas. Kontrollera internetanslutningen och försök igen.",foot:"Chatten, 3D-förhandsvisning och nedladdning av STL- och 3MF-filer fungerar för de valda modelltyperna.",language:"Språk",surprisePrompt:"Överraska mig och hitta på ett användbart litet 3D-utskrivbart föremål.",decorPrompt:"Jag vill designa en dekoration.",usefulPrompt:"Jag vill designa ett praktiskt föremål för vardagen.",sys:"Svara alltid på svenska. Du är en vänlig och lättanvänd designassistent för 3D-föremål. Använd korta, tydliga meningar och ställ bara en enkel fråga åt gången. Fråga inte igen om sådant kunden redan har berättat. Om kunden ber dig överraska eller välja åt dem, gör rimliga val själv. Be inte kunden att godkänna inskickning i chatten. Påstå inte att du har skapat en STL-fil eller 3D-modell om den inte faktiskt har skapats."},
-en:{title:"Design your own 3D object",intro:"Describe your idea in your own words. AI will help with the design – no 3D modelling skills needed.",hint:"💬 Chat with the design assistant. Ask or tell one thing at a time.",welcome:"Hello! 😊 What would you like to make? You can describe your idea in one sentence.",surprise:"Surprise me",decor:"Decoration",useful:"Useful item",placeholder:"Type here...",send:"Send",ready:"When you are ready",readyText:"You do not need to wait for the AI to ask. You can send your design request at any time using this button.",open:"Ready – send design request",form:"Send design request",formIntro:"Enter your contact details. If you do not know the exact dimensions, keep the default values and explain more in the chat.",name:"Name *",email:"Email *",length:"Length (mm)",width:"Width (mm)",height:"Height (mm)",material:"Material",other:"Not sure / other",consent:"I have checked the details and agree to submit this design request for processing.",submit:"Send request",sending:"Sending...",success:"Request received! Reference: ",error:"Sending failed. Please try again.",chatError:"Your message could not be sent. Check your connection and try again.",foot:"Chat, 3D preview and STL/3MF downloads are available for the selected model types.",language:"Language",surprisePrompt:"Surprise me with a useful small 3D-printable object idea.",decorPrompt:"I want to design a decoration.",usefulPrompt:"I want to design a practical everyday item.",sys:"Always reply in English. You are a friendly, easy-to-use 3D object design assistant. Use short, clear sentences and ask only one simple question at a time. Do not ask again about details the customer has already provided. If the customer asks you to surprise them or choose for them, make sensible choices yourself. Do not ask the customer to approve sending in the chat. Do not claim to have created an STL file or 3D model unless it has actually been created."}
+fi:{lang:"Kieli",title:"Suunnittele oma 3D-malli keskustelemalla",intro:"Kuvaile ideasi. Tekoäly muokkaa mallia jokaisen viestisi perusteella – voit pyytää muutoksia aivan tavallisella kielellä.",chatTitle:"Suunnittelukeskustelu",hint:"Kerro idea ja pyydä muutoksia keskustelun aikana.",welcome:"Hei! Millaisen 3D-esineen haluaisit suunnitella? Kerro vaikka vain alustava idea.",placeholder:"Kerro ideasi tai pyydä muutosta...",send:"Lähetä",typing:"Suunnitteluavustaja miettii…",surprise:"Yllätä minut",decor:"Koriste",useful:"Käyttöesine",modelTitle:"Nykyinen mallisuunnitelma",modelSub:"Päivittyy keskustelun mukana",waiting:"Odottaa ensimmäistä ideaa",revision:"Versio",empty:"Kun kerrot, mitä haluat tehdä, tekoäly kokoaa mallin mitat ja rakenteen tähän. Pyydä sen jälkeen muutoksia keskustelussa.",dimensions:"Mitat",parts:"Osat",material:"Materiaali",downloadTitle:"Lataa päivitetty malli",downloadInfo:"Tiedostot muodostetaan viimeisimmän keskustelussa sovitun mallin perusteella.",stepsTitle:"Näin suunnittelu toimii",step1:"Kerro, millaisen esineen haluat.",step2:"Pyydä muutoksia: koko, muoto, reiät tai yksityiskohdat.",step3:"Mallin tiedot päivittyvät keskustelun perusteella.",step4:"Lataa uusin STL- tai 3MF-tiedosto.",readyTitle:"Lähetä suunnittelupyyntö",readyText:"Kun olet tyytyväinen keskustelussa muodostettuun malliin, voit lähettää pyynnön käsiteltäväksi.",open:"Avaa yhteystietolomake",formTitle:"Yhteystiedot ja mallin lähetys",formIntro:"Mallin tämänhetkinen kuvaus ja mitat liitetään pyyntöön automaattisesti.",name:"Nimi *",email:"Sähköposti *",length:"Pituus (mm)",width:"Leveys (mm)",height:"Korkeus (mm)",other:"En tiedä / muu",consent:"Olen tarkistanut tiedot ja hyväksyn, että suunnittelupyyntö lähetetään käsiteltäväksi.",submit:"Lähetä pyyntö",sending:"Lähetetään…",success:"Pyyntö vastaanotettu! Tunniste: ",error:"Lähetys epäonnistui. Tarkista yhteys ja yritä uudelleen.",chatError:"Viestin lähetys epäonnistui. Tarkista internetyhteys ja kokeile uudelleen.",foot:"3D-esikatselua ei käytetä. Mallin rakenne päivittyy tekoälykeskustelun perusteella ja tiedostot luodaan viimeisimmästä malliversiosta.",surprisePrompt:"Yllätä minut: ehdota hyödyllistä pientä 3D-tulostettavaa esinettä ja suunnittele siitä malli.",decorPrompt:"Haluan suunnitella koristeen. Ehdota yhtä ideaa ja aloita mallin suunnittelu.",usefulPrompt:"Haluan suunnitella käytännöllisen arjen apuvälineen. Auta minua tekemään siitä 3D-malli.",modelUpdated:"Malli päivitetty keskustelun perusteella.",modelKept:"Malli säilyi ennallaan. Kerro, mitä haluat muuttaa.",modelMissing:"Tekoäly ei vielä palauttanut ladattavaa mallirakennetta. Kerro esineestä tai tarkenna sen muotoa.",invalidModel:"Mallin rakenne ei ollut kelvollinen. Kokeile kuvata muoto yksinkertaisemmin.",downloaded:"Mallitiedosto luotu.",downloadError:"Tiedoston luonti epäonnistui.",aiPrompt:"Vastaa aina suomeksi. Olet selkeä ja ystävällinen 3D-esineiden suunnitteluavustaja. Kysy yksi tarkentava kysymys kerrallaan. Älä kysy uudelleen asioita, jotka asiakas on jo kertonut. Keskustele ideasta luonnollisesti ja päivitä suunnitelmaa jokaisen muutospyynnön perusteella. TÄRKEÄÄ: Jokaisen vastauksesi loppuun lisää täsmälleen yksi koneellisesti luettava <MODEL_SPEC>...</MODEL_SPEC>-lohko. Älä koskaan näytä lohkoa asiakkaalle näkyvässä keskustelutekstissä (käyttöliittymä piilottaa sen). Lohkon sisällä on joko null (jos esinettä ei ole vielä tunnistettu) tai kelvollinen JSON-objekti tällä rakenteella: {"name":"lyhyt mallin nimi","description":"lyhyt kuvaus","material":"PLA tai PETG","dimensions":{"x":100,"y":80,"z":50},"parts":[{"type":"box","size":[100,3,80],"at":[0,0,0]},{"type":"cylinder","radius":5,"height":3,"at":[0,0,0]},{"type":"ring","outerRadius":7,"innerRadius":3,"height":3,"at":[0,0,0]}]}. Kaikki mitat millimetreinä. Osat ovat mallin keskipisteeseen nähden sijoitettuja: boxin at on keskipiste ja size on X,Y,Z; cylinderin ja ringin akseli on Z. Käytä vain tyyppejä box, cylinder ja ring. Luo enintään 12 osaa. Osien pitää muodostaa yksi yhtenäinen tai toisiinsa liittyvä, 3D-tulostuskelpoinen esine. Älä sisällytä JSONiin kommentteja tai markdownia. Pidä mallin jokaisen osan todellinen koko korkeintaan 250 x 250 x 260 mm. Älä keksi liitoksia, joita ei voi tulostaa. Jos asiakas pyytää muutosta, palauta aina KOKO päivitetty parts-lista, älä vain muutosta. Jos asiakas kysyy tarkennusta mutta mallin perusidea on jo selvä, säilytä aiempi malli tai päivitä vain sovitut kohdat. Älä koskaan väitä STL/3MF-tiedoston syntyneen, tiedosto luodaan sivulla vasta latauspainikkeesta."},
+sv:{lang:"Språk",title:"Skapa din egen 3D-modell genom att chatta",intro:"Beskriv din idé. AI ändrar modellen utifrån varje meddelande – du kan be om ändringar med vanligt språk.",chatTitle:"Designchatt",hint:"Berätta din idé och be om ändringar i chatten.",welcome:"Hej! Vilket 3D-föremål vill du designa? Börja med en enkel idé.",placeholder:"Beskriv din idé eller be om en ändring...",send:"Skicka",typing:"Designassistenten tänker…",surprise:"Överraska mig",decor:"Dekoration",useful:"Bruksföremål",modelTitle:"Aktuell modelldesign",modelSub:"Uppdateras under chatten",waiting:"Väntar på din första idé",revision:"Version",empty:"Berätta vad du vill skapa. AI sammanställer mått och konstruktion här. Be sedan om ändringar i chatten.",dimensions:"Mått",parts:"Delar",material:"Material",downloadTitle:"Ladda ner uppdaterad modell",downloadInfo:"Filerna skapas från den senaste modellversionen i chatten.",stepsTitle:"Så fungerar det",step1:"Berätta vilket föremål du vill skapa.",step2:"Be om ändringar i storlek, form eller detaljer.",step3:"Modellen uppdateras utifrån chatten.",step4:"Ladda ner den senaste STL- eller 3MF-filen.",readyTitle:"Skicka designförfrågan",readyText:"När du är nöjd med modellen kan du skicka förfrågan för behandling.",open:"Öppna kontaktformuläret",formTitle:"Kontaktuppgifter och modell",formIntro:"Den aktuella modelldesignen och måtten bifogas automatiskt.",name:"Namn *",email:"E-post *",length:"Längd (mm)",width:"Bredd (mm)",height:"Höjd (mm)",other:"Vet inte / annat",consent:"Jag har kontrollerat uppgifterna och godkänner att förfrågan skickas.",submit:"Skicka förfrågan",sending:"Skickar…",success:"Förfrågan mottagen! ID: ",error:"Det gick inte att skicka. Kontrollera anslutningen och försök igen.",chatError:"Meddelandet kunde inte skickas. Kontrollera internetanslutningen och försök igen.",foot:"Ingen 3D-förhandsvisning används. Modellens konstruktion uppdateras under AI-chatten och filer skapas från den senaste versionen.",surprisePrompt:"Överraska mig: föreslå ett litet användbart 3D-utskrivbart föremål och designa modellen.",decorPrompt:"Jag vill designa en dekoration. Föreslå en idé och börja skapa modellen.",usefulPrompt:"Jag vill designa ett praktiskt vardagsföremål. Hjälp mig skapa en 3D-modell.",modelUpdated:"Modellen uppdaterades från chatten.",modelKept:"Modellen är oförändrad. Berätta vad du vill ändra.",modelMissing:"AI har ännu inte skapat en nedladdningsbar modellstruktur. Beskriv föremålet eller formen mer.",invalidModel:"Modellstrukturen var ogiltig. Försök beskriva formen enklare.",downloaded:"Modellfilen skapades.",downloadError:"Det gick inte att skapa filen.",aiPrompt:"Svara alltid på svenska. Du är en tydlig, vänlig 3D-designassistent. Ställ en följdfråga i taget. Fråga inte om sådant kunden redan har berättat. Diskutera idén naturligt och uppdatera designen efter varje ändringsbegäran. VIKTIGT: Lägg till exakt ett maskinläsbart <MODEL_SPEC>...</MODEL_SPEC>-block i slutet av varje svar. Blocket döljs i chattgränssnittet. Inuti ska det finnas null om inget föremål har identifierats, annars ett giltigt JSON-objekt: {"name":"modellnamn","description":"kort beskrivning","material":"PLA eller PETG","dimensions":{"x":100,"y":80,"z":50},"parts":[{"type":"box","size":[100,3,80],"at":[0,0,0]},{"type":"cylinder","radius":5,"height":3,"at":[0,0,0]},{"type":"ring","outerRadius":7,"innerRadius":3,"height":3,"at":[0,0,0]}]}. Alla mått i millimeter. box at är centrum och size X,Y,Z. cylinder och ring har Z-axel. Använd endast box, cylinder, ring. Högst 12 delar. Delarna ska bilda ett sammanhängande eller anslutet 3D-utskrivbart föremål. Fullständig parts-lista vid varje ändring, inte bara ändrade delar. Behåll tidigare modell när kunden bara svarar på en följdfråga. Påstå inte att STL/3MF har skapats; filen skapas först när kunden trycker på nedladdning."},
+en:{lang:"Language",title:"Design your own 3D model by chatting",intro:"Describe your idea. AI updates the model based on each message – ask for changes in plain language.",chatTitle:"Design conversation",hint:"Describe your idea and ask for changes in the conversation.",welcome:"Hello! What kind of 3D object would you like to design? Start with a simple idea.",placeholder:"Describe your idea or request a change...",send:"Send",typing:"The design assistant is thinking…",surprise:"Surprise me",decor:"Decoration",useful:"Useful item",modelTitle:"Current model design",modelSub:"Updates as you chat",waiting:"Waiting for your first idea",revision:"Version",empty:"Tell us what you want to create. AI will assemble the dimensions and structure here. Then request changes in the chat.",dimensions:"Dimensions",parts:"Parts",material:"Material",downloadTitle:"Download updated model",downloadInfo:"Files are generated from the latest model version agreed in the chat.",stepsTitle:"How it works",step1:"Describe the object you want.",step2:"Ask for changes to size, shape or details.",step3:"The model updates based on the conversation.",step4:"Download the latest STL or 3MF file.",readyTitle:"Send design request",readyText:"When you are happy with the model, submit the request for processing.",open:"Open contact form",formTitle:"Contact details and model",formIntro:"The current model design and dimensions are added automatically.",name:"Name *",email:"Email *",length:"Length (mm)",width:"Width (mm)",height:"Height (mm)",other:"Not sure / other",consent:"I have checked the details and agree to submit this request.",submit:"Send request",sending:"Sending…",success:"Request received! ID: ",error:"Sending failed. Check your connection and try again.",chatError:"Message could not be sent. Check your internet connection and try again.",foot:"No 3D preview is used. The model structure updates during the AI chat and files are generated from the latest version.",surprisePrompt:"Surprise me: suggest a small useful 3D-printable object and design its model.",decorPrompt:"I want to design a decoration. Suggest one idea and start building the model.",usefulPrompt:"I want to design a practical everyday object. Help me make a 3D model.",modelUpdated:"Model updated from the conversation.",modelKept:"The model is unchanged. Tell me what you want to change.",modelMissing:"AI has not returned a downloadable model structure yet. Describe the object or shape in more detail.",invalidModel:"The model structure was invalid. Try describing the shape more simply.",downloaded:"Model file created.",downloadError:"Could not create the model file.",aiPrompt:"Always reply in English. You are a friendly, clear 3D design assistant. Ask one follow-up question at a time. Do not ask for details already given. Discuss the idea naturally and update the model after every change request. IMPORTANT: Append exactly one machine-readable <MODEL_SPEC>...</MODEL_SPEC> block to the end of EVERY answer. The chat UI hides this block. Inside provide null if no object has been identified, otherwise valid JSON: {"name":"model name","description":"short description","material":"PLA or PETG","dimensions":{"x":100,"y":80,"z":50},"parts":[{"type":"box","size":[100,3,80],"at":[0,0,0]},{"type":"cylinder","radius":5,"height":3,"at":[0,0,0]},{"type":"ring","outerRadius":7,"innerRadius":3,"height":3,"at":[0,0,0]}]}. All dimensions in millimetres. box at is center and size is X,Y,Z; cylinder and ring axis is Z. Use only box, cylinder and ring. Maximum 12 parts. Parts must form one connected or joined 3D-printable object. Always return the COMPLETE updated parts array, not just changed parts. Preserve the current model when asking a clarification. Never claim the STL/3MF file has been created; it is created only when user downloads."}
 };
-let currentLanguage="fi";
-function setLanguage(lang){
- currentLanguage=translations[lang]?lang:"fi";const t=translations[currentLanguage];
- const put=(id,value)=>{const el=$(id);if(el)el.textContent=value};
- put("languageLabel",t.language);put("pageTitle",t.title);put("pageIntro",t.intro);put("chatHint",t.hint);put("welcome",t.welcome);put("surpriseBtn",t.surprise);put("decorBtn",t.decor);put("usefulBtn",t.useful);put("send",t.send);put("readyTitle",t.ready);put("readyText",t.readyText);put("openForm",t.open);put("formTitle",t.form);put("formIntro",t.formIntro);put("nameLabel",t.name);put("emailLabel",t.email);put("lengthLabel",t.length);put("widthLabel",t.width);put("heightLabel",t.height);put("materialLabel",t.material);put("otherMaterial",t.other);put("consentText",t.consent);put("submitRequest",t.submit);put("footNote",t.foot);
- $("message").placeholder=t.placeholder;$("message").setAttribute("aria-label",t.placeholder);document.documentElement.lang=currentLanguage;
-}
+let currentLanguage="fi",messages=[],currentModel=null,modelRevision=0;
+function setLanguage(lang){currentLanguage=translations[lang]?lang:"fi";const t=translations[currentLanguage];const put=(id,v)=>{if($(id))$(id).textContent=v};put("languageLabel",t.lang);put("pageTitle",t.title);put("pageIntro",t.intro);put("chatTitle",t.chatTitle);put("chatHint",t.hint);put("welcome",t.welcome);put("surpriseBtn",t.surprise);put("decorBtn",t.decor);put("usefulBtn",t.useful);put("send",t.send);put("typing",t.typing);put("modelTitle",t.modelTitle);put("modelSub",t.modelSub);put("dimensionsLabel",t.dimensions);put("partsLabel",t.parts);put("materialInfoLabel",t.material);put("downloadTitle",t.downloadTitle);put("downloadInfo",t.downloadInfo);put("stepsTitle",t.stepsTitle);put("step1",t.step1);put("step2",t.step2);put("step3",t.step3);put("step4",t.step4);put("readyTitle",t.readyTitle);put("readyText",t.readyText);put("openForm",t.open);put("formTitle",t.formTitle);put("formIntro",t.formIntro);put("nameLabel",t.name);put("emailLabel",t.email);put("lengthLabel",t.length);put("widthLabel",t.width);put("heightLabel",t.height);put("materialLabel",t.material);put("otherMaterial",t.other);put("consentText",t.consent);put("submitRequest",t.submit);put("footNote",t.foot);$("message").placeholder=t.placeholder;document.documentElement.lang=currentLanguage;if(!currentModel)put("modelStatus",t.waiting)}
 $("languageSelect").addEventListener("change",e=>setLanguage(e.target.value));
-
-const chat=$("chat"),messages=[];
+const chat=$("chat");
 function add(role,text){const d=document.createElement("div");d.className="msg "+role;d.textContent=text;chat.appendChild(d);chat.scrollTop=chat.scrollHeight}
 function transcript(){return messages.map(m=>(m.role==="user"?"Asiakas: ":"Suunnitteluavustaja: ")+m.content).join("\n\n")}
+function validNum(v,min,max){return typeof v==="number"&&Number.isFinite(v)&&v>=min&&v<=max}
+function validateModel(raw){
+ if(!raw||typeof raw!=="object"||Array.isArray(raw)||!Array.isArray(raw.parts)||raw.parts.length<1||raw.parts.length>12)return null;
+ const dims=raw.dimensions||{};if(!["x","y","z"].every(k=>validNum(Number(dims[k]),1,260)))return null;
+ const parts=[];
+ for(const p of raw.parts){
+  if(!p||!["box","cylinder","ring"].includes(p.type)||!Array.isArray(p.at)||p.at.length!==3||!p.at.every(v=>validNum(Number(v),-260,260)))return null;
+  if(p.type==="box"){if(!Array.isArray(p.size)||p.size.length!==3||!p.size.every(v=>validNum(Number(v),0.5,260)))return null;parts.push({type:"box",size:p.size.map(Number),at:p.at.map(Number)})}
+  else if(p.type==="cylinder"){if(!validNum(Number(p.radius),0.5,130)||!validNum(Number(p.height),0.5,260))return null;parts.push({type:"cylinder",radius:Number(p.radius),height:Number(p.height),at:p.at.map(Number)})}
+  else {if(!validNum(Number(p.outerRadius),1,130)||!validNum(Number(p.innerRadius),0.4,129)||Number(p.innerRadius)>=Number(p.outerRadius)||!validNum(Number(p.height),0.5,260))return null;parts.push({type:"ring",outerRadius:Number(p.outerRadius),innerRadius:Number(p.innerRadius),height:Number(p.height),at:p.at.map(Number)})}
+ }
+ const ext=[0,1,2].map(axis=>Math.max(...parts.map(p=>Math.abs(p.at[axis])+(p.type==="box"?p.size[axis]/2:p.type==="ring"||p.type==="cylinder"?(axis===2?p.height/2:p.radius):0)))*2);
+ if(ext[0]>260||ext[1]>260||ext[2]>270)return null;
+ return {name:String(raw.name||"3D-malli").slice(0,90),description:String(raw.description||"Keskustelussa suunniteltu 3D-malli").slice(0,320),material:["PLA","PETG","ABS"].includes(String(raw.material||"").toUpperCase())?String(raw.material).toUpperCase():"PLA",dimensions:{x:Number(dims.x),y:Number(dims.y),z:Number(dims.z)},parts};
+}
+function parseModel(reply){
+ const matches=[...reply.matchAll(/<MODEL_SPEC>\s*([\s\S]*?)\s*<\/MODEL_SPEC>/gi)];
+ if(!matches.length)return {text:reply.trim(),model:null,found:false};
+ const raw=matches[matches.length-1][1].trim();if(raw==="null")return {text:reply.replace(/<MODEL_SPEC>[\s\S]*?<\/MODEL_SPEC>/gi,"").trim(),model:null,found:true};
+ try{return {text:reply.replace(/<MODEL_SPEC>[\s\S]*?<\/MODEL_SPEC>/gi,"").trim(),model:validateModel(JSON.parse(raw)),found:true}}catch{return {text:reply.replace(/<MODEL_SPEC>[\s\S]*?<\/MODEL_SPEC>/gi,"").trim(),model:null,found:true}}
+}
+function renderModel(){
+ const t=translations[currentLanguage];$("modelDot").classList.toggle("ready",!!currentModel);$("downloadStl").disabled=!currentModel;$("download3mf").disabled=!currentModel;
+ if(!currentModel){$("modelEmpty").hidden=false;$("modelDetails").hidden=true;$("modelStatus").textContent=t.waiting;$("modelRevision").textContent=t.revision+" "+modelRevision;return}
+ $("modelEmpty").hidden=true;$("modelDetails").hidden=false;$("modelStatus").textContent=t.modelUpdated;$("modelRevision").textContent=t.revision+" "+modelRevision;
+ $("modelName").textContent=currentModel.name;$("modelDescription").textContent=currentModel.description;$("modelDimensions").textContent=currentModel.dimensions.x+" × "+currentModel.dimensions.y+" × "+currentModel.dimensions.z+" mm";$("modelParts").textContent=currentModel.parts.length;$("modelMaterial").textContent=currentModel.material;
+ $("length").value=Math.round(currentModel.dimensions.x);$("width").value=Math.round(currentModel.dimensions.y);$("height").value=Math.round(currentModel.dimensions.z);$("material").value=currentModel.material.toLowerCase()==="petg"?"petg":currentModel.material.toLowerCase()==="abs"?"abs":"pla";
+}
 async function sendMessage(value){
- if(!value.trim())return;
- messages.push({role:"user",content:value.trim()});add("user",value.trim());$("message").value="";$("send").disabled=true;$("send").textContent="...";
+ if(!value.trim())return;const userText=value.trim();messages.push({role:"user",content:userText});add("user",userText);$("message").value="";$("send").disabled=true;$("typing").hidden=false;$("modelNotice").textContent="";
  try{
-  const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"chat",messages:[{role:"user",content:translations[currentLanguage].sys+" Do not ask the customer to approve sending in chat; the separate page button submits the request. Do not claim to create STL or CAD files unless actually generated."},...messages]})});
-  const d=await r.json();if(!r.ok||!d.success)throw Error(d.error||"Palvelu ei vastannut");
-  messages.push({role:"assistant",content:d.reply});add("assistant",d.reply);
- }catch(err){add("assistant",translations[currentLanguage].chatError);console.error(err)}
- finally{$("send").disabled=false;$("send").textContent="Lähetä";$("message").focus()}
+  const prompt=translations[currentLanguage].aiPrompt;
+  const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"chat",messages:[{role:"user",content:prompt},...messages]})});
+  const d=await r.json();if(!r.ok||!d.success)throw Error(d.error||"AI-palvelu ei vastannut");
+  const parsed=parseModel(String(d.reply||""));messages.push({role:"assistant",content:parsed.text});add("assistant",parsed.text||"");
+  if(parsed.found&&parsed.model){currentModel=parsed.model;modelRevision++;renderModel();$("modelNotice").textContent=translations[currentLanguage].modelUpdated;$("modelNotice").className="notice success"}
+  else if(!currentModel){$("modelNotice").textContent=translations[currentLanguage].modelMissing;$("modelNotice").className="notice"}
+  else {$("modelNotice").textContent=translations[currentLanguage].modelKept;$("modelNotice").className="notice"}
+ }catch(err){add("assistant",translations[currentLanguage].chatError);$("modelNotice").textContent=translations[currentLanguage].chatError;$("modelNotice").className="notice error";console.error(err)}
+ finally{$("typing").hidden=true;$("send").disabled=false;$("send").textContent=translations[currentLanguage].send;$("message").focus()}
 }
 $("chatForm").addEventListener("submit",e=>{e.preventDefault();sendMessage($("message").value)});
 document.querySelectorAll("[data-prompt-key]").forEach(b=>b.addEventListener("click",()=>sendMessage(translations[currentLanguage][b.dataset.promptKey+"Prompt"])));
-$("openForm").addEventListener("click",()=>{const form=$("requestForm");form.hidden=false;$("openForm").textContent="Suunnittelupyyntölomake avattu";form.scrollIntoView({behavior:"smooth",block:"start"});$("name").focus()});
-$("requestForm").addEventListener("submit",async e=>{
- e.preventDefault();const b=$("submitRequest");b.disabled=true;b.textContent=translations[currentLanguage].sending;$("notice").textContent="";
- try{
-  const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"submit",asiakas_nimi:$("name").value.trim(),asiakas_email:$("email").value.trim(),esineen_kuvaus:transcript(),pituus_mm:$("length").value,leveys_mm:$("width").value,korkeus_mm:$("height").value,materiaali:$("material").value})});
-  const d=await r.json();if(!r.ok||!d.success)throw Error(d.error||"Tallennus epäonnistui");
-  $("notice").textContent=translations[currentLanguage].success+d.id;b.textContent=translations[currentLanguage].submit;$("requestForm").querySelectorAll("input,select,button").forEach(x=>x.disabled=true);
- }catch(err){$("notice").textContent=translations[currentLanguage].error+" ("+(err?.message||"Tuntematon virhe")+")";b.disabled=false;b.textContent=translations[currentLanguage].submit;console.error("Suunnittelupyynnön lähetys epäonnistui:",err)}
-});
-</script>
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js"}}</script>
-<script type="module">
-import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js";
-import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/controls/OrbitControls.js";
-import { STLExporter } from "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/exporters/STLExporter.js";
-import JSZip from "https://cdn.jsdelivr.net/npm/jszip@3.10.1/+esm";
-(()=>{
-const el=id=>document.getElementById(id);
-const host=el("preview3d"); if(!host)return;
-const scene=new THREE.Scene();scene.background=new THREE.Color(0x07101d);
-const camera=new THREE.PerspectiveCamera(42,1,0.1,10000);camera.position.set(180,150,210);
-const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});
-renderer.setPixelRatio(Math.min(devicePixelRatio,2));host.appendChild(renderer.domElement);
-const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;
-scene.add(new THREE.HemisphereLight(0xffffff,0x34445b,2));
-const light=new THREE.DirectionalLight(0xffffff,2.2);light.position.set(150,250,180);scene.add(light);
-const grid=new THREE.GridHelper(300,30,0x3b5577,0x24364d);grid.position.y=-0.2;scene.add(grid);
-const model=new THREE.Group();scene.add(model);
-let currentType="box",currentDims=[100,80,50];
-function addBox(w,h,d,x,y,z,material){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;model.add(m);return m}
-function build(){
- while(model.children.length) {const o=model.children.pop();o.geometry?.dispose();}
- const [L,W,H]=currentDims.map(v=>Math.max(1,Number(v)||1));
- const mat=new THREE.MeshStandardMaterial({color:0x3985e8,metalness:.12,roughness:.55});
- if(currentType==="box"){
-  const wall=Math.max(2,Math.min(4,Math.min(L,W)/18)),base=Math.max(2,Math.min(4,H/12));
-  addBox(L,base,W,0,base/2,0,mat);
-  addBox(L, H, wall,0,H/2, W/2-wall/2,mat);
-  addBox(L, H, wall,0,H/2,-W/2+wall/2,mat);
-  addBox(wall,H,W-2*wall,-L/2+wall/2,H/2,0,mat);
-  addBox(wall,H,W-2*wall,L/2-wall/2,H/2,0,mat);
- } else if(currentType==="stand"){
-  const t=Math.max(4,Math.min(7,H/10));
-  addBox(L,t,W,0,t/2,0,mat);
-  const back=addBox(L,Math.max(20,H*.85),t,0,t+Math.max(20,H*.425),-W*.36,mat);
-  back.rotation.x=-0.16;
-  const brace=addBox(Math.max(8,L*.12),Math.max(15,H*.62),Math.max(5,t),0,t+H*.32,W*.12,mat);
-  brace.rotation.x=-0.48;
-  addBox(L,Math.max(5,t),Math.max(8,W*.12),0,t+Math.max(5,t)/2,W*.36,mat);
- } else {
-  const plateT=Math.max(4,Math.min(7,L/15));
-  addBox(L,H,plateT,0,H/2,0,mat);
-  const radius=Math.max(7,Math.min(W*.28,H*.22));
-  const curve=new THREE.CatmullRomCurve3([
-   new THREE.Vector3(0,H*.72,plateT/2),
-   new THREE.Vector3(0,H*.72,W*.32),
-   new THREE.Vector3(0,H*.48,W*.62),
-   new THREE.Vector3(0,H*.22,W*.62),
-   new THREE.Vector3(0,H*.14,W*.42)
-  ]);
-  const tube=new THREE.Mesh(new THREE.TubeGeometry(curve,40,Math.max(2,Math.min(4,radius/4)),12,false),mat);model.add(tube);
+$("openForm").addEventListener("click",()=>{$("requestForm").hidden=false;$("requestForm").scrollIntoView({behavior:"smooth",block:"start"});$("name").focus()});
+function trianglesForModel(spec){
+ const tris=[];const tri=(a,b,c)=>tris.push([a,b,c]);
+ const v=(x,y,z)=>[x,y,z];
+ function box(cx,cy,cz,sx,sy,sz){
+  const x0=cx-sx/2,x1=cx+sx/2,y0=cy-sy/2,y1=cy+sy/2,z0=cz-sz/2,z1=cz+sz/2;
+  const A=v(x0,y0,z0),B=v(x1,y0,z0),C=v(x1,y1,z0),D=v(x0,y1,z0),E=v(x0,y0,z1),F=v(x1,y0,z1),G=v(x1,y1,z1),H=v(x0,y1,z1);
+  [[A,D,C],[A,C,B],[E,F,G],[E,G,H],[A,B,F],[A,F,E],[B,C,G],[B,G,F],[C,D,H],[C,H,G],[D,A,E],[D,E,H]].forEach(t=>tri(...t));
  }
- model.updateMatrixWorld(true);
- const box=new THREE.Box3().setFromObject(model);const size=box.getSize(new THREE.Vector3());const center=box.getCenter(new THREE.Vector3());
- controls.target.copy(center);const max=Math.max(size.x,size.y,size.z,40);camera.position.set(center.x+max*1.35,center.y+max*.95,center.z+max*1.55);camera.near=Math.max(.1,max/1000);camera.far=max*30;camera.updateProjectionMatrix();controls.update();
- el("previewLoading")?.remove();
+ function cylinder(cx,cy,cz,r,h,n=48){
+  const lo=cz-h/2,hi=cz+h/2,centerLo=v(cx,cy,lo),centerHi=v(cx,cy,hi);
+  for(let i=0;i<n;i++){const a=i*2*Math.PI/n,b=(i+1)*2*Math.PI/n,p0=v(cx+r*Math.cos(a),cy+r*Math.sin(a),lo),p1=v(cx+r*Math.cos(b),cy+r*Math.sin(b),lo),q0=v(p0[0],p0[1],hi),q1=v(p1[0],p1[1],hi);tri(p0,p1,q1);tri(p0,q1,q0);tri(centerHi,q0,q1);tri(centerLo,p1,p0)}
+ }
+ function ring(cx,cy,cz,ro,ri,h,n=64){
+  const lo=cz-h/2,hi=cz+h/2;
+  for(let i=0;i<n;i++){const a=i*2*Math.PI/n,b=(i+1)*2*Math.PI/n;
+   const point=(r,z,t)=>v(cx+r*Math.cos(t),cy+r*Math.sin(t),z);
+   const ol0=point(ro,lo,a),ol1=point(ro,lo,b),oh0=point(ro,hi,a),oh1=point(ro,hi,b);
+   const il0=point(ri,lo,a),il1=point(ri,lo,b),ih0=point(ri,hi,a),ih1=point(ri,hi,b);
+   tri(ol0,ol1,oh1);tri(ol0,oh1,oh0);tri(il1,il0,ih0);tri(il1,ih0,ih1);
+   tri(oh0,oh1,ih1);tri(oh0,ih1,ih0);tri(ol1,ol0,il0);tri(ol1,il0,il1);
+  }
+ }
+ for(const p of spec.parts){const [x,y,z]=p.at;if(p.type==="box")box(x,y,z,...p.size);else if(p.type==="cylinder")cylinder(x,y,z,p.radius,p.height);else ring(x,y,z,p.outerRadius,p.innerRadius,p.height)}
+ return tris;
 }
-function resize(){const w=host.clientWidth,h=host.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
-new ResizeObserver(resize).observe(host);resize();
-function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)}animate();
-function update(){currentType=el("modelType").value;currentDims=[el("length").value,el("width").value,el("height").value];build()}
-el("modelType").addEventListener("change",update);
-["length","width","height"].forEach(id=>el(id).addEventListener("change",update));
-function download(blob,name){const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1500)}
-function safeName(){return ({box:"sailytyslaatikko",stand:"puhelinteline",hook:"seinakoukku"})[currentType]}
-el("downloadStl").addEventListener("click",()=>{
- try{model.updateMatrixWorld(true);const data=new STLExporter().parse(model,{binary:true});download(new Blob([data],{type:"model/stl"}),safeName()+".stl");el("modelNotice").textContent="STL-tiedosto luotu."}catch(e){console.error(e);el("modelNotice").textContent="STL-tiedoston luonti epäonnistui."}
+function binaryStl(tris){
+ const buffer=new ArrayBuffer(84+tris.length*50),view=new DataView(buffer),header=new TextEncoder().encode("AI-designed model - millimetres");new Uint8Array(buffer,0,header.length).set(header);view.setUint32(80,tris.length,true);let offset=84;
+ for(const t of tris){const [a,b,c]=t;const ux=b[0]-a[0],uy=b[1]-a[1],uz=b[2]-a[2],vx=c[0]-a[0],vy=c[1]-a[1],vz=c[2]-a[2];let nx=uy*vz-uz*vy,ny=uz*vx-ux*vz,nz=ux*vy-uy*vx;const len=Math.hypot(nx,ny,nz)||1;[nx/len,ny/len,nz/len,...a,...b,...c].forEach(n=>{view.setFloat32(offset,n,true);offset+=4});view.setUint16(offset,0,true);offset+=2}
+ return new Blob([buffer],{type:"model/stl"});
+}
+function modelXml(tris){
+ const verts=[],faces=[],map=new Map();
+ for(const t of tris){const face=[];for(const p of t){const k=p.map(n=>Number(n.toFixed(4))).join(",");let idx=map.get(k);if(idx===undefined){idx=verts.length;map.set(k,idx);verts.push(p)}face.push(idx)}faces.push(face)}
+ const vxml=verts.map(p=>'<vertex x="'+p[0].toFixed(4)+'" y="'+p[1].toFixed(4)+'" z="'+p[2].toFixed(4)+'"/>').join("");
+ const txml=faces.map(t=>'<triangle v1="'+t[0]+'" v2="'+t[1]+'" v3="'+t[2]+'"/>').join("");
+ return '<?xml version="1.0" encoding="UTF-8"?><model unit="millimeter" xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02"><resources><object id="1" type="model"><mesh><vertices>'+vxml+'</vertices><triangles>'+txml+'</triangles></mesh></object></resources><build><item objectid="1"/></build></model>';
+}
+function saveBlob(blob,name){const u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=name.replace(/[^\p{L}\p{N}_-]+/gu,"_")+"."+ (blob.type==="model/stl"?"stl":"3mf");document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),3000)}
+function setFileNotice(message,type=""){ $("modelNotice").textContent=message;$("modelNotice").className="notice "+type}
+$("downloadStl").addEventListener("click",()=>{if(!currentModel)return;try{saveBlob(binaryStl(trianglesForModel(currentModel)),currentModel.name);setFileNotice(translations[currentLanguage].downloaded,"success")}catch(e){console.error(e);setFileNotice(translations[currentLanguage].downloadError,"error")}});
+$("download3mf").addEventListener("click",async()=>{if(!currentModel)return;const b=$("download3mf");b.disabled=true;setFileNotice("Luodaan 3MF…");try{const {default:JSZip}=await import("https://cdn.jsdelivr.net/npm/jszip@3.10.1/+esm");const zip=new JSZip(),tris=trianglesForModel(currentModel);zip.file("[Content_Types].xml",'<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="model" ContentType="application/vnd.ms-package.3dmanufacturing-3dmodel+xml"/></Types>');zip.folder("_rels").file(".rels",'<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Target="/3D/3dmodel.model" Id="rel0" Type="http://schemas.microsoft.com/3dmanufacturing/2013/01/3dmodel"/></Relationships>');zip.folder("3D").file("3dmodel.model",modelXml(tris));const blob=await zip.generateAsync({type:"blob",mimeType:"application/vnd.ms-package.3dmanufacturing-3dmodel"});saveBlob(blob,currentModel.name);setFileNotice(translations[currentLanguage].downloaded,"success")}catch(e){console.error(e);setFileNotice(translations[currentLanguage].downloadError,"error")}finally{b.disabled=!currentModel}});
+$("requestForm").addEventListener("submit",async e=>{
+ e.preventDefault();const b=$("submitRequest"),t=translations[currentLanguage];b.disabled=true;b.textContent=t.sending;$("notice").textContent="";
+ try{const dimensions=currentModel?.dimensions||{x:$("length").value,y:$("width").value,z:$("height").value};const payload={action:"submit",asiakas_nimi:$("name").value.trim(),asiakas_email:$("email").value.trim(),esineen_kuvaus:transcript()+"\n\nMallin rakenne: "+(currentModel?JSON.stringify(currentModel):"Ei vielä muodostettu") ,pituus_mm:Math.round(Number(dimensions.x)),leveys_mm:Math.round(Number(dimensions.y)),korkeus_mm:Math.round(Number(dimensions.z)),materiaali:$("material").value};
+ const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});const d=await r.json();if(!r.ok||!d.success)throw Error(d.error||"Tallennus epäonnistui");$("notice").textContent=t.success+d.id;$("notice").className="notice success";b.textContent=t.submit;$("requestForm").querySelectorAll("input,select,button").forEach(x=>x.disabled=true)}
+ catch(err){$("notice").textContent=t.error+" ("+(err?.message||"Virhe")+")";$("notice").className="notice error";b.disabled=false;b.textContent=t.submit;console.error(err)}
 });
-el("download3mf").addEventListener("click",async()=>{
- const button=el("download3mf");button.disabled=true;el("modelNotice").textContent="Luodaan 3MF-tiedostoa…";
- try{
-  model.updateMatrixWorld(true);const vertices=[],triangles=[];let offset=0;
-  model.traverse(obj=>{if(!obj.isMesh)return;const g=obj.geometry.clone().toNonIndexed();g.applyMatrix4(obj.matrixWorld);const p=g.getAttribute("position");for(let i=0;i<p.count;i+=3){const a=vertices.length;for(let j=0;j<3;j++)vertices.push([p.getX(i+j),p.getY(i+j),p.getZ(i+j)]);triangles.push([a,a+1,a+2]);}g.dispose()});
-  const vxml=vertices.map(v=>'<vertex x="'+v[0].toFixed(4)+'" y="'+v[1].toFixed(4)+'" z="'+v[2].toFixed(4)+'"/>').join("");
-  const txml=triangles.map(t=>'<triangle v1="'+t[0]+'" v2="'+t[1]+'" v3="'+t[2]+'"/>').join("");
-  const xml='<?xml version="1.0" encoding="UTF-8"?><model unit="millimeter" xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02"><resources><object id="1" type="model"><mesh><vertices>'+vxml+'</vertices><triangles>'+txml+'</triangles></mesh></object></resources><build><item objectid="1"/></build></model>';
-  const zip=new JSZip();zip.file("[Content_Types].xml",'<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="model" ContentType="application/vnd.ms-package.3dmanufacturing-3dmodel+xml"/></Types>');
-  zip.folder("_rels").file(".rels",'<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Target="/3D/3dmodel.model" Id="rel0" Type="http://schemas.microsoft.com/3dmanufacturing/2013/01/3dmodel"/></Relationships>');
-  zip.folder("3D").file("3dmodel.model",xml);const blob=await zip.generateAsync({type:"blob",mimeType:"application/vnd.ms-package.3dmanufacturing-3dmodel"});download(blob,safeName()+".3mf");el("modelNotice").textContent="3MF-tiedosto luotu.";
- }catch(e){console.error(e);el("modelNotice").textContent="3MF-tiedoston luonti epäonnistui."}finally{button.disabled=false}
-});
-update();
-})();
+setLanguage("fi");renderModel();
 </script>
 </body></html>
