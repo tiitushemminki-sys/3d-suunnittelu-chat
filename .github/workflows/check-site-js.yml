@@ -4,10 +4,11 @@ on:
     paths:
       - "index.html"
       - ".github/workflows/check-site-js.yml"
+      - "tests/**"
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -31,7 +32,7 @@ jobs:
             node --check "$file"
           done
       - name: Install OpenSCAD WebAssembly
-        run: npm install --no-save @lofcz/openscad-wasm@0.0.2
+        run: npm install --no-save @lofcz/openscad-wasm@0.0.2 playwright
       - name: Compile a parametric test model to STL and 3MF
         run: |
           node --input-type=module <<'JS'
@@ -121,3 +122,7 @@ jobs:
           console.log("Live AI response contains valid model metadata and OpenSCAD code.");
           console.log("Model: " + spec.name + "; dimensions: " + JSON.stringify(spec.dimensions) + "; SCAD characters: " + scad.length);
           JS
+      - name: Install Chromium for browser test
+        run: npx playwright install --with-deps chromium
+      - name: Test real AI chat and browser downloads
+        run: node tests/browser-download.mjs
