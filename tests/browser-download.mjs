@@ -40,10 +40,16 @@ try {
   }
 
   for (const [format, selector] of [["stl", "#downloadStl"], ["3mf", "#download3mf"]]) {
-    const [download] = await Promise.all([
-      page.waitForEvent("download", { timeout: 180000 }),
-      page.locator(selector).click()
-    ]);
+    let download;
+    try {
+      const pendingDownload = page.waitForEvent("download", { timeout: 45000 });
+      await page.locator(selector).click();
+      download = await pendingDownload;
+    } catch (error) {
+      const status = await page.locator("#modelNotice").textContent().catch(() => "");
+      const buttonState = await page.locator(selector).isDisabled().catch(() => true);
+      throw new Error(format.toUpperCase() + " failed to download. Page status: " + status + "; button disabled: " + buttonState + "; browser errors: " + errors.join(" | ") + "; reason: " + error.message);
+    }
     const path = await download.path();
     if (!path) throw new Error(format.toUpperCase() + " download did not produce a file");
     const file = await stat(path);
