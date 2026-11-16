@@ -113,7 +113,7 @@ function migrateLegacyModel(raw){
    statements.push("translate(["+at+"]) difference(){ cylinder(r="+Number(p.outerRadius).toFixed(3)+", h="+Number(p.height).toFixed(3)+", center=true, $fn=64); cylinder(r="+Number(p.innerRadius).toFixed(3)+", h="+(Number(p.height)+0.2).toFixed(3)+", center=true, $fn=64); }");
   }else return null;
  }
- const scad="$fn=64;\\nunion(){\\n"+statements.join("\\n")+"\\n}\\n";
+ const scad="$fn=64;\nunion(){\n"+statements.join("\n")+"\n}\n";
  return validateModel({name:raw.name,description:raw.description,material:raw.material||"PLA",dimensions:raw.dimensions},scad);
 }
 function restoreSession(){
