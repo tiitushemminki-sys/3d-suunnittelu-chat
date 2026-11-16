@@ -71,7 +71,7 @@ try {
   await page.locator("#confirmDetails").check();
 
   let submittedPayload = null;
-  await page.route(/3d-mallinnus-palvelu-6af9\\.fra\\.appwrite\\.run/, async route => {
+  await page.route(/3d-mallinnus-palvelu-6af9\.fra\.appwrite\.run/, async route => {
     submittedPayload = route.request().postDataJSON();
     await route.fulfill({
       status: 200,
