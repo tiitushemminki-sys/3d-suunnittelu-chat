@@ -57,7 +57,7 @@ select,input,textarea{font:inherit;color:var(--text);background:#091729;border:1
 <div class="field"><label for="length" id="lengthLabel">Pituus (mm)</label><input id="length" type="number" min="1" max="250" value="100" required></div>
 <div class="field"><label for="width" id="widthLabel">Leveys (mm)</label><input id="width" type="number" min="1" max="250" value="80" required></div>
 <div class="field"><label for="height" id="heightLabel">Korkeus (mm)</label><input id="height" type="number" min="1" max="260" value="50" required></div>
-<div class="field"><label for="material" id="materialLabel">Materiaali</label><select id="material"><option value="pla">PLA</option><option value="petg">PETG</option><option value="abs">ABS</option><option value="other" id="otherMaterial">En tiedä / muu</option></select></div>
+<div class="field"><label for="material" id="materialLabel">Materiaali</label><select id="material"><option value="PLA">PLA</option><option value="PETG">PETG</option><option value="ABS">ABS</option><option value="OTHER" id="otherMaterial">En tiedä / muu</option></select></div>
 </div>
 <label id="consent"><input id="confirmDetails" type="checkbox" required><span id="consentText">Olen tarkistanut tiedot ja hyväksyn, että suunnittelupyyntö lähetetään käsiteltäväksi.</span></label>
 <button class="primary" id="submitRequest" type="submit">Lähetä pyyntö</button><div id="notice" class="notice" role="status"></div>
@@ -175,7 +175,7 @@ function renderModel(){
  $("length").value=Math.round(currentModel.dimensions.x);
  $("width").value=Math.round(currentModel.dimensions.y);
  $("height").value=Math.round(currentModel.dimensions.z);
- $("material").value=currentModel.material.toLowerCase()==="petg"?"petg":currentModel.material.toLowerCase()==="abs"?"abs":"pla";
+ $("material").value=currentModel.material;
 }
 async function sendMessage(value){
  if(!value.trim())return;const userText=value.trim();messages.push({role:"user",content:userText});add("user",userText);$("message").value="";$("send").disabled=true;$("typing").hidden=false;$("modelNotice").textContent="";
