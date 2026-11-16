@@ -71,7 +71,7 @@ try {
   await page.locator("#confirmDetails").check();
 
   let submittedPayload = null;
-  await page.route(url => url.href === "https://3d-mallinnus-palvelu-6af9.fra.appwrite.run", async route => {
+  await page.route(/3d-mallinnus-palvelu-6af9\\.fra\\.appwrite\\.run/, async route => {
     submittedPayload = route.request().postDataJSON();
     await route.fulfill({
       status: 200,
@@ -80,7 +80,14 @@ try {
     });
   });
   await page.locator("#submitRequest").click();
-  await page.waitForFunction(() => document.querySelector("#notice")?.classList.contains("success"));
+  await page.waitForFunction(() => {
+    const notice = document.querySelector("#notice");
+    return notice && (notice.classList.contains("success") || notice.classList.contains("error"));
+  }, null, { timeout: 15000 });
+  const formNotice = await page.locator("#notice").textContent();
+  if (!await page.locator("#notice").evaluate(el => el.classList.contains("success"))) {
+    throw new Error("Design request form returned an error: " + formNotice + "; browser errors: " + errors.join(" | "));
+  }
   if (!submittedPayload) throw new Error("Design request was not sent to the API endpoint");
   if (submittedPayload.action !== "submit") throw new Error("Incorrect request action");
   if (submittedPayload.pituus_mm !== 111 || submittedPayload.leveys_mm !== 112 || submittedPayload.korkeus_mm !== 33) {
