@@ -1,7 +1,7 @@
 import { chromium } from "playwright";
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
-import { stat } from "node:fs";
+import { stat } from "node:fs/promises";
 
 const html = await readFile(new URL("../index.html", import.meta.url));
 const server = createServer((req, res) => {
