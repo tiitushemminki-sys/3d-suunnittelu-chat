@@ -1,0 +1,31 @@
+name: Check website JavaScript
+on:
+  push:
+    paths:
+      - "index.html"
+      - ".github/workflows/check-site-js.yml"
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Extract inline scripts and check syntax
+        run: |
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+          html = Path("index.html").read_text(encoding="utf-8")
+          scripts = re.findall(r'<script(?![^>]*src=)[^>]*>(.*?)</script>', html, re.I | re.S)
+          if not scripts:
+              raise SystemExit("No inline script found")
+          for i, script in enumerate(scripts):
+              Path(f"/tmp/inline-{i}.js").write_text(script, encoding="utf-8")
+          print(f"Extracted {len(scripts)} inline script(s)")
+          PY
+          for file in /tmp/inline-*.js; do
+            echo "Checking $file"
+            node --check "$file"
+          done
