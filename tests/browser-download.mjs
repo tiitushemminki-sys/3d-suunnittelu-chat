@@ -60,6 +60,41 @@ try {
     console.log(format.toUpperCase() + " browser download passed: " + download.suggestedFilename() + " (" + file.size + " bytes)");
   }
 
+  // Test the design request payload without creating a real database record.
+  await page.locator("#openForm").click();
+  await page.locator("#name").fill("Testiasiakas");
+  await page.locator("#email").fill("test@example.com");
+  await page.locator("#length").fill("111");
+  await page.locator("#width").fill("112");
+  await page.locator("#height").fill("33");
+  await page.locator("#material").selectOption("PETG");
+  await page.locator("#confirmDetails").check();
+
+  let submittedPayload = null;
+  await page.route(url => url.href === "https://3d-mallinnus-palvelu-6af9.fra.appwrite.run", async route => {
+    submittedPayload = route.request().postDataJSON();
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ success: true, id: "browser-test-only" })
+    });
+  });
+  await page.locator("#submitRequest").click();
+  await page.waitForFunction(() => document.querySelector("#notice")?.classList.contains("success"));
+  if (!submittedPayload) throw new Error("Design request was not sent to the API endpoint");
+  if (submittedPayload.action !== "submit") throw new Error("Incorrect request action");
+  if (submittedPayload.pituus_mm !== 111 || submittedPayload.leveys_mm !== 112 || submittedPayload.korkeus_mm !== 33) {
+    throw new Error("Design request did not use the dimensions entered in the form: " + JSON.stringify(submittedPayload));
+  }
+  if (submittedPayload.materiaali !== "PETG") throw new Error("Incorrect material value: " + submittedPayload.materiaali);
+  if (typeof submittedPayload.esineen_kuvaus !== "string" || submittedPayload.esineen_kuvaus.length > 7000) {
+    throw new Error("Design description is missing or exceeds the database-safe size");
+  }
+  if (submittedPayload.esineen_kuvaus.includes('"scad":')) {
+    throw new Error("Full CAD source should not be embedded in the description field");
+  }
+  console.log("Design request form payload passed (compact description, form dimensions and material)");
+
   if (errors.length) console.log("Browser console messages: " + errors.join(" | "));
   await context.close();
 } finally {
