@@ -252,10 +252,54 @@ async function downloadCad(format){
 $("downloadStl").addEventListener("click",()=>downloadCad("stl"));
 $("download3mf").addEventListener("click",()=>downloadCad("3mf"));
 $("requestForm").addEventListener("submit",async e=>{
- e.preventDefault();const b=$("submitRequest"),t=translations[currentLanguage];b.disabled=true;b.textContent=t.sending;$("notice").textContent="";
- try{const dimensions=currentModel?.dimensions||{x:$("length").value,y:$("width").value,z:$("height").value};const payload={action:"submit",asiakas_nimi:$("name").value.trim(),asiakas_email:$("email").value.trim(),esineen_kuvaus:transcript()+"\n\nMallin rakenne: "+(currentModel?JSON.stringify(currentModel):"Ei vielä muodostettu") ,pituus_mm:Math.round(Number(dimensions.x)),leveys_mm:Math.round(Number(dimensions.y)),korkeus_mm:Math.round(Number(dimensions.z)),materiaali:$("material").value};
- const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});const d=await r.json();if(!r.ok||!d.success)throw Error(d.error||"Tallennus epäonnistui");$("notice").textContent=t.success+d.id;$("notice").className="notice success";b.textContent=t.submit;$("requestForm").querySelectorAll("input,select,button").forEach(x=>x.disabled=true)}
- catch(err){$("notice").textContent=t.error+" ("+(err?.message||"Virhe")+")";$("notice").className="notice error";b.disabled=false;b.textContent=t.submit;console.error(err)}
+ e.preventDefault();
+ const b=$("submitRequest"),t=translations[currentLanguage];
+ b.disabled=true;b.textContent=t.sending;$("notice").textContent="";
+ try{
+  // Use the values shown in the form, including any edits made by the customer.
+  const dimensions={x:Number($("length").value),y:Number($("width").value),z:Number($("height").value)};
+  if(!Number.isFinite(dimensions.x)||dimensions.x<1||dimensions.x>250||
+     !Number.isFinite(dimensions.y)||dimensions.y<1||dimensions.y>250||
+     !Number.isFinite(dimensions.z)||dimensions.z<1||dimensions.z>260){
+   throw new Error("Tarkista mitat: pituus/leveys 1–250 mm ja korkeus 1–260 mm.");
+  }
+  // Keep the database description compact. The full OpenSCAD source is not a
+  // customer-facing description and can exceed the database text-field limit.
+  const modelSummary=currentModel?[
+   "Mallin nimi: "+currentModel.name,
+   "Mallin kuvaus: "+currentModel.description,
+   "Mallin materiaali: "+currentModel.material,
+   "Mallin alkuperäiset mitat: "+currentModel.dimensions.x+" × "+currentModel.dimensions.y+" × "+currentModel.dimensions.z+" mm"
+  ].join("\n"):"Mallia ei ole vielä muodostettu.";
+  const description=("Suunnittelukeskustelu:\n"+transcript().slice(-4000)+"\n\nMallin yhteenveto:\n"+modelSummary).slice(0,7000);
+  const payload={
+   action:"submit",
+   asiakas_nimi:$("name").value.trim(),
+   asiakas_email:$("email").value.trim(),
+   esineen_kuvaus:description,
+   pituus_mm:Math.round(dimensions.x),
+   leveys_mm:Math.round(dimensions.y),
+   korkeus_mm:Math.round(dimensions.z),
+   materiaali:$("material").value
+  };
+  const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+  const responseText=await r.text();
+  let d={};
+  try{d=responseText?JSON.parse(responseText):{}}catch{d={error:responseText.slice(0,500)||"Palvelin palautti virheellisen vastauksen."}}
+  if(!r.ok||!d.success){
+   const detail=d.error||d.message||("HTTP "+r.status);
+   throw new Error(detail+" (HTTP "+r.status+")");
+  }
+  $("notice").textContent=t.success+(d.id||d.requestId||"");
+  $("notice").className="notice success";
+  b.textContent=t.submit;
+  $("requestForm").querySelectorAll("input,select,button").forEach(x=>x.disabled=true);
+ }catch(err){
+  $("notice").textContent=t.error+" ("+(err?.message||"Virhe")+")";
+  $("notice").className="notice error";
+  b.disabled=false;b.textContent=t.submit;
+  console.error("Suunnittelupyynnön lähetys epäonnistui:",err);
+ }
 });
 setLanguage("fi");renderModel();restoreSession();
 </script>
