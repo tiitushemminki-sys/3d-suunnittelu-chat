@@ -160,7 +160,7 @@ function renderModel(){
 async function sendMessage(value){
  if(!value.trim())return;const userText=value.trim();messages.push({role:"user",content:userText});add("user",userText);$("message").value="";$("send").disabled=true;$("typing").hidden=false;$("modelNotice").textContent="";
  try{
-  const existingModel=currentModel?"\\n\\nCURRENT_MODEL_STATE (use this as the exact starting geometry and update it based on the customer request): "+JSON.stringify(currentModel):"\\n\\nNo model has been created yet.";
+  const existingModel=currentModel?"\\n\\nCURRENT_MODEL_STATE — preserve this exact geometry and change only features the customer requested. Return the full updated SCAD source and metadata:\\n"+JSON.stringify(currentModel):"\\n\\nNo existing CAD model. Start from the customer requirements.";
   const languageName={fi:"Finnish",sv:"Swedish",en:"English"}[currentLanguage];
   const prompt=CAD_SYSTEM_PROMPT.replace("{{LANG}}",languageName)+existingModel;
   const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"chat",messages:[{role:"user",content:prompt},...messages]})});
