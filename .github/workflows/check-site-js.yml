@@ -104,12 +104,20 @@ jobs:
           const data = await response.json();
           if (!response.ok || !data.success) throw new Error("AI endpoint failed: " + JSON.stringify(data).slice(0,1500));
           const reply = String(data.reply || "");
-          if (!/<MODEL_SPEC>[\\s\\S]*?<\\/MODEL_SPEC>/i.test(reply)) throw new Error("AI did not return MODEL_SPEC: " + reply.slice(-2000));
-          if (!/<SCAD_CODE>[\\s\\S]*?<\\/SCAD_CODE>/i.test(reply)) throw new Error("AI did not return SCAD_CODE: " + reply.slice(-3000));
-          const specText = reply.match(/<MODEL_SPEC>\\s*([\\s\\S]*?)\\s*<\\/MODEL_SPEC>/i)?.[1];
+          function extract(tag) {
+            const start = reply.indexOf("<" + tag + ">");
+            if (start < 0) return "";
+            const contentStart = start + tag.length + 2;
+            const end = reply.indexOf("</" + tag + ">", contentStart);
+            return end < 0 ? "" : reply.slice(contentStart, end).trim();
+          }
+          const specText = extract("MODEL_SPEC");
+          const scad = extract("SCAD_CODE");
+          if (!specText) throw new Error("AI did not return MODEL_SPEC: " + reply.slice(-2000));
+          if (!scad) throw new Error("AI did not return SCAD_CODE: " + reply.slice(-3000));
           const spec = JSON.parse(specText);
-          const scad = reply.match(/<SCAD_CODE>\\s*([\\s\\S]*?)\\s*<\\/SCAD_CODE>/i)?.[1] || "";
-          if (!spec || !spec.dimensions || !/\\b(?:cube|cylinder|sphere|polygon|linear_extrude)\\s*\\(/i.test(scad)) throw new Error("AI response does not contain usable CAD geometry: " + reply.slice(-3000));
+          const hasGeometry = ["cube(", "cube (", "cylinder(", "cylinder (", "sphere(", "sphere (", "polygon(", "linear_extrude("].some(x => scad.includes(x));
+          if (!spec || !spec.dimensions || !hasGeometry) throw new Error("AI response does not contain usable CAD geometry: " + reply.slice(-3000));
           console.log("Live AI response contains valid model metadata and OpenSCAD code.");
           console.log("Model: " + spec.name + "; dimensions: " + JSON.stringify(spec.dimensions) + "; SCAD characters: " + scad.length);
           JS
