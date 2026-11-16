@@ -1,4 +1,4 @@
-name: Check website JavaScript
+name: Check website JavaScript and CAD engine
 on:
   push:
     paths:
@@ -7,6 +7,7 @@ on:
 jobs:
   check:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -29,3 +30,56 @@ jobs:
             echo "Checking $file"
             node --check "$file"
           done
+      - name: Install OpenSCAD WebAssembly
+        run: npm install --no-save @lofcz/openscad-wasm@0.0.2
+      - name: Compile a parametric test model to STL and 3MF
+        run: |
+          node --input-type=module <<'JS'
+          import OpenSCAD from "@lofcz/openscad-wasm";
+          import { addFonts } from "@lofcz/openscad-wasm/fonts";
+          import { readFileSync } from "node:fs";
+          import { join } from "node:path";
+
+          const wasmBytes = readFileSync(join(process.cwd(), "node_modules/@lofcz/openscad-wasm/openscad.wasm"));
+          const scad = `
+          $fn = 48;
+          difference() {
+            hull() {
+              for (x = [-15, 15])
+                for (y = [-10, 10])
+                  translate([x, y, 0]) cylinder(r = 4, h = 8, center = true);
+            }
+            translate([0, 0, -8]) cylinder(d = 6, h = 16);
+          }
+          `;
+
+          async function compile(format) {
+            const instance = await OpenSCAD({
+              noInitialRun: true,
+              instantiateWasm(imports, receiveInstance) {
+                WebAssembly.instantiate(wasmBytes, imports).then(({ instance }) => receiveInstance(instance));
+                return {};
+              }
+            });
+            addFonts(instance);
+            instance.FS.writeFile("/test.scad", scad);
+            const output = format === "stl" ? "/test.stl" : "/test.3mf";
+            const args = format === "stl"
+              ? ["/test.scad", "--backend", "Manifold", "--export-format", "binstl", "-o", output]
+              : ["/test.scad", "--backend", "Manifold", "--export-format", "3mf", "-o", output];
+            const exitCode = instance.callMain(args);
+            if (exitCode !== 0) throw new Error("OpenSCAD failed to export " + format);
+            const bytes = instance.FS.readFile(output);
+            if (!(bytes instanceof Uint8Array) || bytes.length < 100) throw new Error("Empty " + format + " output");
+            if (format === "stl") {
+              const count = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength).getUint32(80, true);
+              if (bytes.length !== 84 + count * 50 || count === 0) throw new Error("Invalid binary STL");
+            } else if (bytes[0] !== 0x50 || bytes[1] !== 0x4b) {
+              throw new Error("Invalid 3MF ZIP signature");
+            }
+            console.log(format.toUpperCase() + " export passed (" + bytes.length + " bytes)");
+          }
+
+          await compile("stl");
+          await compile("3mf");
+          JS
