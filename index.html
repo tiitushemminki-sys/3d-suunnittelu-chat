@@ -196,6 +196,10 @@ async function sendMessage(value){
 $("chatForm").addEventListener("submit",e=>{e.preventDefault();sendMessage($("message").value)});
 document.querySelectorAll("[data-prompt-key]").forEach(b=>b.addEventListener("click",()=>sendMessage(translations[currentLanguage][b.dataset.promptKey+"Prompt"])));
 $("openForm").addEventListener("click",()=>{$("requestForm").hidden=false;$("requestForm").scrollIntoView({behavior:"smooth",block:"start"});$("name").focus()});
+function setFileNotice(message,type=""){
+ $("modelNotice").textContent=message;
+ $("modelNotice").className="notice "+type;
+}
 const OPENSCAD_BASE="https://cdn.jsdelivr.net/npm/@lofcz/openscad-wasm@0.0.2/";
 function safeFileName(name){
  return String(name||"3d-malli").normalize("NFKD").replace(/[^a-zA-Z0-9_-]+/g,"_").replace(/^_+|_+$/g,"").slice(0,60)||"3d-malli";
