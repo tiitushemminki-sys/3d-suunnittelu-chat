@@ -98,14 +98,33 @@ If asking a clarification with an existing model, repeat the exact existing comp
 let currentLanguage="fi",messages=[],currentModel=null,modelRevision=0;
 const SESSION_KEY="3d-model-chat-session-v1";
 function saveSession(){try{localStorage.setItem(SESSION_KEY,JSON.stringify({language:currentLanguage,messages,currentModel,modelRevision}))}catch(e){console.warn("Session tallennus ei onnistunut",e)}}
+function migrateLegacyModel(raw){
+ if(!raw||typeof raw!=="object"||!Array.isArray(raw.parts)||raw.parts.length<1||raw.parts.length>12)return null;
+ const statements=[];
+ for(const p of raw.parts){
+  if(!p||!Array.isArray(p.at)||p.at.length!==3||!p.at.every(v=>Number.isFinite(Number(v))))return null;
+  const at=p.at.map(v=>Number(v).toFixed(3)).join(", ");
+  if(p.type==="box"&&Array.isArray(p.size)&&p.size.length===3&&p.size.every(v=>Number.isFinite(Number(v))&&Number(v)>0)){
+   const size=p.size.map(v=>Number(v).toFixed(3)).join(", ");
+   statements.push("translate(["+at+"]) cube(["+size+"], center=true);");
+  }else if(p.type==="cylinder"&&Number(p.radius)>0&&Number(p.height)>0){
+   statements.push("translate(["+at+"]) cylinder(r="+Number(p.radius).toFixed(3)+", h="+Number(p.height).toFixed(3)+", center=true, $fn=64);");
+  }else if(p.type==="ring"&&Number(p.outerRadius)>Number(p.innerRadius)&&Number(p.innerRadius)>0&&Number(p.height)>0){
+   statements.push("translate(["+at+"]) difference(){ cylinder(r="+Number(p.outerRadius).toFixed(3)+", h="+Number(p.height).toFixed(3)+", center=true, $fn=64); cylinder(r="+Number(p.innerRadius).toFixed(3)+", h="+(Number(p.height)+0.2).toFixed(3)+", center=true, $fn=64); }");
+  }else return null;
+ }
+ const scad="$fn=64;\\nunion(){\\n"+statements.join("\\n")+"\\n}\\n";
+ return validateModel({name:raw.name,description:raw.description,material:raw.material||"PLA",dimensions:raw.dimensions},scad);
+}
 function restoreSession(){
  try{
   const s=JSON.parse(localStorage.getItem(SESSION_KEY)||"null");if(!s)return;
   if(translations[s.language]){currentLanguage=s.language;$("languageSelect").value=currentLanguage;setLanguage(currentLanguage)}
   if(Array.isArray(s.messages))messages=s.messages.filter(m=>m&&["user","assistant"].includes(m.role)&&typeof m.content==="string").slice(-80);
-  currentModel=s.currentModel?validateModel(s.currentModel,s.currentModel.scad):null;modelRevision=Number.isFinite(Number(s.modelRevision))?Number(s.modelRevision):0;
+  currentModel=s.currentModel?(validateModel(s.currentModel,s.currentModel.scad)||migrateLegacyModel(s.currentModel)):null;modelRevision=Number.isFinite(Number(s.modelRevision))?Number(s.modelRevision):0;
   if(messages.length){chat.innerHTML="";messages.forEach(m=>add(m.role,m.content))}
   renderModel();
+  if(currentModel)saveSession();
  }catch(e){console.warn("Tallennetun suunnitelman palautus ei onnistunut",e)}
 }
 function setLanguage(lang){currentLanguage=translations[lang]?lang:"fi";const t=translations[currentLanguage];const put=(id,v)=>{if($(id))$(id).textContent=v};put("languageLabel",t.lang);put("pageTitle",t.title);put("pageIntro",t.intro);put("chatTitle",t.chatTitle);put("chatHint",t.hint);put("welcome",t.welcome);put("surpriseBtn",t.surprise);put("decorBtn",t.decor);put("usefulBtn",t.useful);put("send",t.send);put("typing",t.typing);put("modelTitle",t.modelTitle);put("modelSub",t.modelSub);put("dimensionsLabel",t.dimensions);put("partsLabel",t.parts);put("materialInfoLabel",t.material);put("downloadTitle",t.downloadTitle);put("downloadInfo",t.downloadInfo);put("stepsTitle",t.stepsTitle);put("step1",t.step1);put("step2",t.step2);put("step3",t.step3);put("step4",t.step4);put("readyTitle",t.readyTitle);put("readyText",t.readyText);put("openForm",t.open);put("formTitle",t.formTitle);put("formIntro",t.formIntro);put("nameLabel",t.name);put("emailLabel",t.email);put("lengthLabel",t.length);put("widthLabel",t.width);put("heightLabel",t.height);put("materialLabel",t.material);put("otherMaterial",t.other);put("consentText",t.consent);put("submitRequest",t.submit);put("footNote",t.foot);$("message").placeholder=t.placeholder;document.documentElement.lang=currentLanguage;if(!currentModel)put("modelStatus",t.waiting)}
