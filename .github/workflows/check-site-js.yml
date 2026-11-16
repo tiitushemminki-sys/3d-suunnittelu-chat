@@ -83,3 +83,33 @@ jobs:
           await compile("stl");
           await compile("3mf");
           JS
+      - name: Test the live AI response format
+        env:
+          AI_ENDPOINT: https://3d-mallinnus-palvelu-6af9.fra.appwrite.run
+        run: |
+          node --input-type=module <<'JS'
+          const prompt = `You are a mechanical CAD designer. Reply in Finnish. For every reply output exactly one <MODEL_SPEC> JSON block followed by one <SCAD_CODE> block. MODEL_SPEC JSON: {"name":"name","description":"description","material":"PLA","dimensions":{"x":40,"y":40,"z":40}}. SCAD_CODE is complete valid OpenSCAD code only. No Markdown fences, no external dependencies. Make an accurate 40 mm cube. Return these blocks now.`;
+          const response = await fetch(process.env.AI_ENDPOINT, {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({
+              action: "chat",
+              messages: [
+                {role:"user",content:prompt},
+                {role:"user",content:"Tee 40 mm kuutio."}
+              ]
+            }),
+            signal: AbortSignal.timeout(120000)
+          });
+          const data = await response.json();
+          if (!response.ok || !data.success) throw new Error("AI endpoint failed: " + JSON.stringify(data).slice(0,1500));
+          const reply = String(data.reply || "");
+          if (!/<MODEL_SPEC>[\\s\\S]*?<\\/MODEL_SPEC>/i.test(reply)) throw new Error("AI did not return MODEL_SPEC: " + reply.slice(-2000));
+          if (!/<SCAD_CODE>[\\s\\S]*?<\\/SCAD_CODE>/i.test(reply)) throw new Error("AI did not return SCAD_CODE: " + reply.slice(-3000));
+          const specText = reply.match(/<MODEL_SPEC>\\s*([\\s\\S]*?)\\s*<\\/MODEL_SPEC>/i)?.[1];
+          const spec = JSON.parse(specText);
+          const scad = reply.match(/<SCAD_CODE>\\s*([\\s\\S]*?)\\s*<\\/SCAD_CODE>/i)?.[1] || "";
+          if (!spec || !spec.dimensions || !/\\b(?:cube|cylinder|sphere|polygon|linear_extrude)\\s*\\(/i.test(scad)) throw new Error("AI response does not contain usable CAD geometry: " + reply.slice(-3000));
+          console.log("Live AI response contains valid model metadata and OpenSCAD code.");
+          console.log("Model: " + spec.name + "; dimensions: " + JSON.stringify(spec.dimensions) + "; SCAD characters: " + scad.length);
+          JS
