@@ -139,11 +139,23 @@ function parseModel(reply){
  }catch{return {text:visibleText,model:null,found:true}}
 }
 function renderModel(){
- const t=translations[currentLanguage];$("modelDot").classList.toggle("ready",!!currentModel);$("downloadStl").disabled=!currentModel;$("download3mf").disabled=!currentModel;
+ const t=translations[currentLanguage];
+ $("modelDot").classList.toggle("ready",!!currentModel);
+ $("downloadStl").disabled=!currentModel;
+ $("download3mf").disabled=!currentModel;
  if(!currentModel){$("modelEmpty").hidden=false;$("modelDetails").hidden=true;$("modelStatus").textContent=t.waiting;$("modelRevision").textContent=t.revision+" "+modelRevision;return}
- $("modelEmpty").hidden=true;$("modelDetails").hidden=false;$("modelStatus").textContent=t.modelUpdated;$("modelRevision").textContent=t.revision+" "+modelRevision;
- $("modelName").textContent=currentModel.name;$("modelDescription").textContent=currentModel.description;$("modelDimensions").textContent=currentModel.dimensions.x+" × "+currentModel.dimensions.y+" × "+currentModel.dimensions.z+" mm";$("modelParts").textContent=currentModel.parts.length;$("modelMaterial").textContent=currentModel.material;
- $("length").value=Math.round(currentModel.dimensions.x);$("width").value=Math.round(currentModel.dimensions.y);$("height").value=Math.round(currentModel.dimensions.z);$("material").value=currentModel.material.toLowerCase()==="petg"?"petg":currentModel.material.toLowerCase()==="abs"?"abs":"pla";
+ $("modelEmpty").hidden=true;$("modelDetails").hidden=false;
+ $("modelStatus").textContent=t.modelUpdated;$("modelRevision").textContent=t.revision+" "+modelRevision;
+ $("modelName").textContent=currentModel.name;
+ $("modelDescription").textContent=currentModel.description;
+ $("modelDimensions").textContent=currentModel.dimensions.x+" × "+currentModel.dimensions.y+" × "+currentModel.dimensions.z+" mm";
+ const featureCount=(currentModel.scad.match(/\b(?:cube|sphere|cylinder|polygon|polyhedron|linear_extrude|rotate_extrude|circle|square|hull|minkowski)\s*\(/g)||[]).length;
+ $("modelParts").textContent=featureCount+" "+t.parts;
+ $("modelMaterial").textContent=currentModel.material;
+ $("length").value=Math.round(currentModel.dimensions.x);
+ $("width").value=Math.round(currentModel.dimensions.y);
+ $("height").value=Math.round(currentModel.dimensions.z);
+ $("material").value=currentModel.material.toLowerCase()==="petg"?"petg":currentModel.material.toLowerCase()==="abs"?"abs":"pla";
 }
 async function sendMessage(value){
  if(!value.trim())return;const userText=value.trim();messages.push({role:"user",content:userText});add("user",userText);$("message").value="";$("send").disabled=true;$("typing").hidden=false;$("modelNotice").textContent="";
